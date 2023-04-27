@@ -4,6 +4,8 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="naver_client_id">RxLtqceC_WJB11uKYcWy</string>
     <string name="naver_client_secret">1nd746q3Yf</string>
+    <string name="kakao_native_key">b4273c09490711d3f80aa800a7888529</string>
+
     <string-array name="category_array">
         <item>말티즈</item>
         <item>푸들</item>
