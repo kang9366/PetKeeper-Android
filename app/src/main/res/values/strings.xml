@@ -4,4 +4,14 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="naver_client_id">RxLtqceC_WJB11uKYcWy</string>
     <string name="naver_client_secret">1nd746q3Yf</string>
+    <string-array name="category_array">
+        <item>말티즈</item>
+        <item>푸들</item>
+        <item>포메라니안</item>
+        <item>치와와</item>
+        <item>시츄</item>
+        <item>진돗개</item>
+        <item>믹스견</item>
+        <item>직접입력</item>
+    </string-array>
 </resources>

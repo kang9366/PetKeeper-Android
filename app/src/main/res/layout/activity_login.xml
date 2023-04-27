@@ -19,18 +19,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="30dp"/>
+        android:layout_marginTop="24dp"/>
 
     <ImageView
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="24dp"
         android:background="@drawable/login_icon"
         app:layout_constraintStart_toEndOf="@+id/TitleText"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/logo_image"
-        android:layout_marginStart="5dp"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginStart="5dp"/>
 
 
     <ImageView
@@ -46,31 +45,47 @@
     <EditText
         android:id="@+id/editEmail"
         android:layout_width="350dp"
-        android:layout_height="55dp"
+        android:layout_height="45dp"
         app:layout_constraintTop_toBottomOf="@id/logo_image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:hint="Enter E-mail"/>
+        android:padding="10dp"
+        android:textSize="15sp"
+        android:fontFamily="@font/poppins_regular"
+        android:hint="Enter E-mail"
+        android:background="@drawable/edittext_bg"
+        android:inputType="textMultiLine|textNoSuggestions"
+        android:layout_marginTop="20dp"/>
 
     <EditText
         android:id="@+id/editPassword"
         android:layout_width="350dp"
-        android:layout_height="55dp"
+        android:layout_height="45dp"
         app:layout_constraintTop_toBottomOf="@id/editEmail"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:hint="Enter Password"/>
+        android:fontFamily="@font/poppins_regular"
+        android:hint="Enter Password"
+        android:textSize="15sp"
+        android:background="@drawable/edittext_bg"
+        android:padding="10dp"
+        android:layout_marginTop="10dp"
+        android:inputType="textMultiLine|textNoSuggestions|textPassword"/>
 
-    <TextView
+    <Button
         android:id="@+id/search_id"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="20dp"
         android:text="Forgot E-mail?"
+        android:textColor="@color/black"
+        android:textAllCaps="false"
         app:layout_constraintTop_toBottomOf="@+id/editPassword"
         app:layout_constraintBottom_toTopOf="@+id/login_button"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="55dp"/>
+        android:layout_marginEnd="35dp"
+        android:fontFamily="@font/poppins_bold"
+        android:background="@android:color/transparent"/>
 
 
     <Button
@@ -83,34 +98,48 @@
         android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/search_id"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/signup_layout"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="100dp"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"/>
 
-
-    <TextView
-        android:id="@+id/create_account_text"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/signup_layout"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:text="You Don’t have an account?"
+        android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/login_button"
         app:layout_constraintBottom_toTopOf="@+id/naver_login_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/create_account"/>
-
-    <TextView
-        android:id="@+id/create_account"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sign up"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        app:layout_constraintTop_toBottomOf="@+id/login_button"
-        app:layout_constraintBottom_toTopOf="@+id/naver_login_button"
-        app:layout_constraintStart_toEndOf="@id/create_account_text"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp"/>
+        android:layout_gravity="right">
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/create_account_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="You Don’t have an account?"
+            android:fontFamily="@font/poppins_regular"
+            app:layout_constraintEnd_toStartOf="@+id/create_account"/>
+
+        <Button
+            android:id="@+id/create_account"
+            android:layout_width="70dp"
+            android:layout_height="20dp"
+            android:text="Sign up"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:layout_marginLeft="5dp"
+            android:fontFamily="@font/poppins_bold"
+            android:background="@android:color/transparent"/>
+    </LinearLayout>
+
+
 
     <Button
         android:id="@+id/naver_login_button"
@@ -120,12 +149,12 @@
         android:text="LOGIN WITH NAVER"
         android:fontFamily="@font/poppins_bold"
         android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@id/create_account_text"
+        app:layout_constraintTop_toBottomOf="@id/signup_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:drawableStart="@drawable/naver_logo"
         android:layout_marginBottom="100dp"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="50dp"/>
 
     <Button
         android:id="@+id/kakao_login_button"
