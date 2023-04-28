@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1067272358856",
+    "project_id": "petkeeper-45082",
+    "storage_bucket": "petkeeper-45082.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1067272358856:android:a6301de3ed89f374f94efd",
+        "android_client_info": {
+          "package_name": "com.example.petkeeper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1067272358856-kcu404gldgp54bseugb7397c1627smbq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.petkeeper",
+            "certificate_hash": "298f208df62f72106f6ac4a65768c026066f8e13"
+          }
+        },
+        {
+          "client_id": "1067272358856-jvug6mn8hgatad1p7rkhab76g9cspptb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCu_c7q6DSJkEcSbNePNM50px8bX8OTveM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1067272358856-4l5074jtgejvqmskt32uttuuqcluhqj0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
