@@ -62,6 +62,10 @@ class LoginActivity : AppCompatActivity() {
         binding.googleLoginButton.setOnClickListener {
             initGoogleLogin()
         }
+
+        binding.signUpButton.setOnClickListener {
+            initSignUpButton()
+        }
     }
 
     //일반 로그인
@@ -201,5 +205,10 @@ class LoginActivity : AppCompatActivity() {
         } catch (e: ApiException){
             Log.e("Google Login","signInResult:failed Code = " + e.statusCode)
         }
+    }
+
+    private fun initSignUpButton(){
+        val intent = Intent(this, SignUpActivity::class.java)
+        startActivity(intent)
     }
 }
