@@ -7,7 +7,9 @@ import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -34,6 +36,13 @@ class RegisterActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        val imm: InputMethodManager =
+            getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+        return super.dispatchTouchEvent(ev)
     }
 
     @Deprecated("Deprecated in Java")
