@@ -27,7 +27,7 @@
         android:layout_gravity="center"
         android:background="@android:color/transparent"
         app:civ_border_overlay="true"
-        app:civ_border_width="3dp"
+        app:civ_border_width="2dp"
         app:civ_border_color="#000000"
         android:src="@drawable/logo"
         app:layout_constraintTop_toBottomOf="@+id/titleText"
@@ -37,12 +37,12 @@
 
     <Button
         android:id="@+id/add_button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         app:layout_constraintTop_toBottomOf="@+id/titleText"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="140dp"
-        android:layout_marginEnd="110dp"
+        android:layout_marginEnd="117dp"
         android:background="@drawable/add_button"/>
 
     <EditText
@@ -54,7 +54,8 @@
         android:fontFamily="@font/poppins_regular"
         android:hint="Name"
         android:inputType="text"
-        android:padding="10dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="3dp"
         android:gravity="center_vertical"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -65,37 +66,30 @@
     <Spinner
         android:id="@+id/breed_select"
         android:layout_width="350dp"
-        android:layout_height="55dp"
+        android:layout_height="45dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_name"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="20dp"
+        android:spinnerMode="dialog"
+        android:background="@drawable/spinner_bg"
+        android:fontFamily="@font/poppins_regular" />
 
-    <LinearLayout
-        android:id="@+id/birth_layout"
+    <TextView
+        android:id="@+id/birthButton"
         android:layout_width="350dp"
-        android:layout_height="55dp"
+        android:layout_height="45dp"
+        android:background="@drawable/spinner_bg"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/breed_select"
-        android:orientation="horizontal"
         android:layout_marginTop="20dp"
-        android:gravity="center_horizontal">
-        <NumberPicker
-            android:id="@+id/year_picker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"/>
-        <NumberPicker
-            android:id="@+id/month_picker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <NumberPicker
-            android:id="@+id/date_picker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"/>
-    </LinearLayout>
+        android:gravity="center_vertical"
+        android:paddingTop="3dp"
+        android:paddingLeft="10dp"
+        android:textSize="15sp"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="@color/black"/>
 
     <Button
         android:id="@+id/male_button"
@@ -103,10 +97,10 @@
         android:layout_height="80dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/female_button"
-        app:layout_constraintTop_toBottomOf="@id/birth_layout"
+        app:layout_constraintTop_toBottomOf="@id/birthButton"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="100dp"
-        android:background="@drawable/female_icon"/>
+        android:background="@drawable/female_icon" />
 
     <Button
         android:id="@+id/female_button"
@@ -114,7 +108,7 @@
         android:layout_height="80dp"
         app:layout_constraintStart_toEndOf="@id/male_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/birth_layout"
+        app:layout_constraintTop_toBottomOf="@id/birthButton"
         android:layout_marginTop="20dp"
         android:layout_marginRight="100dp"
         android:background="@drawable/male_icon"/>
@@ -131,6 +125,4 @@
         android:textColor="#FFFFFF"
         android:text="REGISTER"
         android:backgroundTint="#F2796B"/>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

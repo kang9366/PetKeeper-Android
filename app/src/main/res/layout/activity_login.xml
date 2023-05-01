@@ -63,7 +63,8 @@
         app:layout_constraintTop_toBottomOf="@id/logoImage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:padding="10dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="3dp"
         android:textSize="15sp"
         android:fontFamily="@font/poppins_regular"
         android:hint="Enter E-mail"
@@ -81,7 +82,8 @@
         android:hint="Enter Password"
         android:textSize="15sp"
         android:background="@drawable/edittext_bg"
-        android:padding="10dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="3dp"
         android:layout_marginTop="10dp"
         android:inputType="textMultiLine|textNoSuggestions|textPassword"/>
 
