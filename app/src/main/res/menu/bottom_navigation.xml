@@ -4,34 +4,34 @@
     app:cnb_unselectedColor="#666666">
 
     <item
-        android:id="@+id/mood"
-        android:icon="@drawable/home"
-        android:title="mood"
+        android:id="@+id/home"
+        android:icon="@drawable/ic_home"
+        android:title="Home"
         app:cnb_iconColor="@color/navigation_color_mood"/>
 
     <item
-        android:id="@+id/habit_tracker"
-        android:icon="@drawable/home"
-        android:title="habit"
-        app:cnb_iconColor="@color/navigation_color_habit"/>
-
-    <item
         android:id="@+id/add"
-        android:icon="@drawable/home"
+        android:icon="@drawable/ic_home"
         android:title="add"
         app:cnb_iconColor="@color/navigation_color_add"/>
 
     <item
-        android:id="@+id/chart"
-        android:icon="@drawable/home"
-        android:title="chart"
+        android:id="@+id/map"
+        android:icon="@drawable/ic_map"
+        android:title="Map"
+        app:cnb_iconColor="@color/navigation_color_chart"/>
+
+    <item
+        android:id="@+id/community"
+        android:icon="@drawable/ic_community"
+        android:title="Community"
         app:cnb_iconColor="@color/navigation_color_chart"/>
 
 
     <item
         android:id="@+id/profile"
-        android:icon="@drawable/profile"
-        android:title="profile"
+        android:icon="@drawable/ic_profile"
+        android:title="Profile"
         app:cnb_iconColor="@color/navigation_color_profile"/>
 
 </menu>

@@ -1,39 +1,59 @@
 package com.example.petkeeper
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import com.example.petkeeper.databinding.ActivityRegisterBinding
+import java.text.SimpleDateFormat
+import java.util.*
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
+
+    @SuppressLint("SimpleDateFormat")
+    override fun onStart() {
+        super.onStart()
+        initSpinner()
+        binding.birthButton.text = currentDate().dateToString("yyyy년 MM월 dd일")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        initSpinner()
 
         binding.addButton.setOnClickListener {
             initAddPhoto()
         }
 
         binding.registerButton.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this@RegisterActivity, MainActivity::class.java)
             startActivity(intent)
         }
+
+        binding.birthButton.setOnClickListener {
+            initBirth()
+        }
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        val imm: InputMethodManager =
+            getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+        return super.dispatchTouchEvent(ev)
     }
 
     @Deprecated("Deprecated in Java")
@@ -117,6 +137,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun initSpinner() {
+        binding.breedSelect.prompt = "품종을 선택해주세요"
         ArrayAdapter.createFromResource(
             applicationContext,
             R.array.category_array,
@@ -140,4 +161,26 @@ class RegisterActivity : AppCompatActivity() {
             }
     }
 
+    private fun Date.dateToString(format: String, local : Locale = Locale.getDefault()): String{
+        val formatter = SimpleDateFormat(format, local)
+        return formatter.format(this)
+    }
+
+    private fun currentDate(): Date{
+        return Calendar.getInstance().time
+    }
+
+    private fun initBirth(){
+        val cal = Calendar.getInstance()    //캘린더뷰 만들기
+        val dateSetListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+            val dateString = "${year}년 ${month+1}월 ${dayOfMonth}일"
+            binding.birthButton.text = dateString
+        }
+        DatePickerDialog(this,
+            dateSetListener,
+            cal.get(Calendar.YEAR),
+            cal.get(Calendar.MONTH),
+            cal.get(Calendar.DAY_OF_MONTH)).
+        show()
+    }
 }
