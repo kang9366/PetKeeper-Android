@@ -3,6 +3,8 @@ package com.example.petkeeper
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import com.example.petkeeper.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -14,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.bottomNav.setItemSelected(0, true)
+        initNavigationBar()
     }
 
     override fun onBackPressed() {
@@ -25,6 +27,27 @@ class MainActivity : AppCompatActivity() {
         }
         if(System.currentTimeMillis() <= backKeyPressedTime + 2500){
             finishAffinity()
+        }
+    }
+
+    private fun initNavigationBar(){
+        fun changeFragment(fragment: Fragment) {
+            val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+            fragmentTransaction.replace(R.id.fragment, fragment)
+            fragmentTransaction.commit()
+        }
+
+        changeFragment(MainFragment())
+        binding.bottomNav.run {
+            setItemSelected(R.id.home)
+            setOnItemSelectedListener { item ->
+                when (item){
+                    R.id.home -> changeFragment(MainFragment())
+                    R.id.map -> changeFragment(MapFragment())
+                    R.id.community -> changeFragment(CommunityFragment())
+                    R.id.profile -> changeFragment(ProfileFragment())
+                }
+            }
         }
     }
 }
