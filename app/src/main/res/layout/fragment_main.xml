@@ -1,14 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainFragment">
-
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        android:text="PetKeeper"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"/>
+    
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/dogImage"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        app:civ_border_overlay="true"
+        app:civ_border_width="2dp"
+        app:civ_border_color="#000000"
+        app:layout_constraintTop_toBottomOf="@+id/titleText"
+        app:layout_constraintStart_toStartOf="@+id/titleText"
+        android:layout_marginTop="25dp"
+        android:src="@drawable/logo"/>
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/nameText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/dogImage"
+        app:layout_constraintStart_toEndOf="@+id/dogImage"
+        android:text="Name"
+        android:layout_marginStart="20dp"/>
+
+    <TextView
+        android:id="@+id/ageText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/dogImage"
+        app:layout_constraintBottom_toBottomOf="@+id/dogImage"
+        android:text="10살"
+        android:layout_marginStart="20dp"/>
+
+    <ImageView
+        android:id="@+id/emotionImage"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:layout_constraintTop_toTopOf="@+id/dogImage"
+        app:layout_constraintBottom_toBottomOf="@+id/dogImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="24dp"
+        android:src="@drawable/sad"/>
+
+    <TextView
+        android:id="@+id/vaccinationTitleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="최근 예방 접종일"
+        app:layout_constraintTop_toBottomOf="@+id/ageText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/weightTitleText"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:id="@+id/weightTitleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="몸무게"
+        app:layout_constraintTop_toBottomOf="@+id/ageText"
+        app:layout_constraintStart_toEndOf="@+id/vaccinationTitleText"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:id="@+id/vaccinationDateText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/vaccinationTitleText"
+        app:layout_constraintEnd_toStartOf="@+id/weightText"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="2020년 12월 3일"/>
+
+    <TextView
+        android:id="@+id/weightText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/vaccinationDateText"
+        app:layout_constraintTop_toBottomOf="@+id/weightTitleText"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="100kg"/>
+
+    <TextView
+        android:id="@+id/weekTitleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/dogImage"
+        app:layout_constraintTop_toBottomOf="@+id/vaccinationDateText"
+        android:text="2023년 5월 1주차"
+        android:layout_marginTop="20dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/weekTitleText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
