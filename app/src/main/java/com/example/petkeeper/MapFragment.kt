@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.petkeeper.databinding.FragmentMapBinding
+import net.daum.mf.map.api.MapView
 
 class MapFragment : Fragment() {
     private lateinit var binding: FragmentMapBinding
@@ -15,8 +16,11 @@ class MapFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMapBinding.inflate(layoutInflater)
+
+        val mapView = MapView(context)
+        val mapViewContainer = binding.mapView
+        mapViewContainer.addView(mapView)
+
         return binding.root
-
-
     }
 }
