@@ -5,9 +5,11 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -16,13 +18,13 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import com.example.petkeeper.databinding.ActivityRegisterBinding
 import java.text.SimpleDateFormat
 import java.util.*
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
-
     @SuppressLint("SimpleDateFormat")
     override fun onStart() {
         super.onStart()
@@ -35,11 +37,17 @@ class RegisterActivity : AppCompatActivity() {
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        var image: Bitmap = binding.dogImage.drawable.toBitmap()
+
         binding.addButton.setOnClickListener {
             initAddPhoto()
         }
 
         binding.registerButton.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("test", "테스트")
+            val mainFragment = MainFragment()
+            mainFragment.arguments = bundle
             val intent = Intent(this@RegisterActivity, MainActivity::class.java)
             startActivity(intent)
         }
@@ -71,7 +79,6 @@ class RegisterActivity : AppCompatActivity() {
                 }else{
                     Toast.makeText(this, "사진을 가져오지 못했습니다", Toast.LENGTH_SHORT).show()
                 }
-
             }
             else -> {
                 Toast.makeText(this, "사진을 가져오지 못했습니다", Toast.LENGTH_SHORT).show()
