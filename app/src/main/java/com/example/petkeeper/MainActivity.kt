@@ -2,6 +2,7 @@ package com.example.petkeeper
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -15,7 +16,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         initNavigationBar()
     }
 
@@ -30,9 +30,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     private fun initNavigationBar(){
         fun changeFragment(fragment: Fragment) {
+            val name = intent.getStringExtra("name")
+            val bundle = Bundle()
+            bundle.putString("name", name)
+
             val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+            fragment.arguments = bundle
             fragmentTransaction.replace(R.id.fragment, fragment)
             fragmentTransaction.commit()
         }
@@ -43,6 +49,7 @@ class MainActivity : AppCompatActivity() {
             setOnItemSelectedListener { item ->
                 when (item){
                     R.id.home -> changeFragment(MainFragment())
+                    R.id.cam -> changeFragment(CamFragment())
                     R.id.map -> changeFragment(MapFragment())
                     R.id.community -> changeFragment(CommunityFragment())
                     R.id.profile -> changeFragment(ProfileFragment())
