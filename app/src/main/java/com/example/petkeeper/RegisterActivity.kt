@@ -44,11 +44,8 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         binding.registerButton.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putString("test", "테스트")
-            val mainFragment = MainFragment()
-            mainFragment.arguments = bundle
             val intent = Intent(this@RegisterActivity, MainActivity::class.java)
+            intent.putExtra("name", binding.editName.text.toString())
             startActivity(intent)
         }
 
