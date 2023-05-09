@@ -2,6 +2,7 @@ package com.example.petkeeper
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Context.LOCATION_SERVICE
@@ -22,13 +23,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat.checkSelfPermission
 import com.example.petkeeper.databinding.FragmentMapBinding
+import net.daum.mf.map.api.MapPOIItem
+import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 
 class MapFragment : Fragment() {
     private lateinit var binding: FragmentMapBinding
     private lateinit var context: Context
-    private lateinit var locationManager: LocationManager
-    private lateinit var myLocationListener: MyLocationListener
 
     override fun onAttach(p0: Context) {
         super.onAttach(p0)
@@ -41,86 +42,43 @@ class MapFragment : Fragment() {
     ): View? {
         binding = FragmentMapBinding.inflate(layoutInflater)
 
-        val mapView = MapView(context)
-        val mapViewContainer = binding.mapView
-        mapViewContainer.addView(mapView)
-
         binding.button.setOnClickListener {
-            getMylocation()
+            startTracking()
         }
 
         return binding.root
     }
 
+    // 현재 사용자 위치추적
+    @SuppressLint("MissingPermission")
+    private fun startTracking() {
+        binding.mapView.currentLocationTrackingMode =
+            MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading  //이 부분
 
+        val lm: LocationManager = context.getSystemService(LOCATION_SERVICE) as LocationManager
+        val userNowLocation: Location? = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+        //위도 , 경도
+        val uLatitude = userNowLocation?.latitude
+        val uLongitude = userNowLocation?.longitude
+        val uNowPosition = MapPoint.mapPointWithGeoCoord(uLatitude!!, uLongitude!!)
 
-    companion object {
-        val locationPermissions = arrayOf(
-            ACCESS_FINE_LOCATION,
-            ACCESS_COARSE_LOCATION
-        )
+        // 현 위치에 마커 찍기
+        val marker = MapPOIItem()
+        marker.itemName = "현 위치"
+        marker.mapPoint =uNowPosition
+        marker.markerType = MapPOIItem.MarkerType.CustomImage
+        
+        marker.selectedMarkerType = MapPOIItem.MarkerType.RedPin
+        binding.mapView.addPOIItem(marker)
     }
 
-    private val permissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            val responsePermissions = permissions.entries.filter {
-                it.key in locationPermissions
-            }
-
-            if (responsePermissions.filter { it.value == true }.size == locationPermissions.size) {
-                setLocationListener()
-            } else {
-                Toast.makeText(context, "no", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-    private fun getMylocation() {
-        if (::locationManager.isInitialized.not()) {
-            locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        }
-        val isGpsEnable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        if (isGpsEnable) {
-            permissionLauncher.launch(locationPermissions)
-        }
+    // 위치추적 중지
+    private fun stopTracking() {
+        binding.mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOff
     }
 
-    @Suppress("MissingPermission")
-    private fun setLocationListener() {
-        val minTime: Long = 1500
-        val minDistance = 100f
-
-        if (::myLocationListener.isInitialized.not()) {
-            myLocationListener = MyLocationListener()
-        }
-
-        with(locationManager) {
-            requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                minTime, minDistance, myLocationListener
-            )
-
-            requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER,
-                minTime, minDistance, myLocationListener
-            )
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        stopTracking()
     }
-
-    inner class MyLocationListener : LocationListener {
-        override fun onLocationChanged(location: Location) {
-            Toast
-                .makeText(context, "${location.latitude}, ${location.longitude}", Toast.LENGTH_SHORT)
-                .show()
-
-            removeLocationListener()
-        }
-
-        private fun removeLocationListener() {
-            if (::locationManager.isInitialized && ::myLocationListener.isInitialized) {
-                locationManager.removeUpdates(myLocationListener)
-            }
-        }
-    }
-
-
 }
