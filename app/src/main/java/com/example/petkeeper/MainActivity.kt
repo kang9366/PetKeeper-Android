@@ -34,9 +34,11 @@ class MainActivity : AppCompatActivity() {
     private fun initNavigationBar(){
         fun changeFragment(fragment: Fragment) {
             val name = intent.getStringExtra("name")
+            val image = intent.getByteArrayExtra("image")
+
             val bundle = Bundle()
             bundle.putString("name", name)
-
+            bundle.putByteArray("image", image)
             val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
             fragment.arguments = bundle
             fragmentTransaction.replace(R.id.fragment, fragment)
