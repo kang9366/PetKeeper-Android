@@ -6,9 +6,12 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -20,11 +23,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.example.petkeeper.databinding.ActivityRegisterBinding
+import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
+    private lateinit var byteArray: ByteArray
+
     @SuppressLint("SimpleDateFormat")
     override fun onStart() {
         super.onStart()
@@ -37,21 +43,34 @@ class RegisterActivity : AppCompatActivity() {
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var image: Bitmap = binding.dogImage.drawable.toBitmap()
+        val intent = Intent(this@RegisterActivity, MainActivity::class.java)
 
         binding.addButton.setOnClickListener {
             initAddPhoto()
         }
 
         binding.registerButton.setOnClickListener {
-            val intent = Intent(this@RegisterActivity, MainActivity::class.java)
-            intent.putExtra("name", binding.editName.text.toString())
+            initDogData(intent)
             startActivity(intent)
         }
 
         binding.birthButton.setOnClickListener {
             initBirth()
         }
+    }
+
+    private fun initDogData(intent: Intent){
+        try {
+            intent.putExtra("image", byteArray)
+        } catch (e: UninitializedPropertyAccessException) {
+            val drawable: Drawable = ContextCompat.getDrawable(applicationContext, R.drawable.logo)!!
+            val bitmap = (drawable as BitmapDrawable).bitmap
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+            byteArray = byteArrayOutputStream.toByteArray()
+            intent.putExtra("image", byteArray)
+        }
+        intent.putExtra("name", binding.editName.text.toString())
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
@@ -73,6 +92,10 @@ class RegisterActivity : AppCompatActivity() {
                 val selectedImageUri: Uri? = data?.data
                 if(selectedImageUri != null){
                     binding.dogImage.setImageURI(selectedImageUri)
+                    val image = MediaStore.Images.Media.getBitmap(contentResolver, selectedImageUri)
+                    val stream = ByteArrayOutputStream()
+                    image.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                    byteArray = stream.toByteArray()
                 }else{
                     Toast.makeText(this, "사진을 가져오지 못했습니다", Toast.LENGTH_SHORT).show()
                 }
@@ -83,7 +106,7 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private fun showPermissionContextPopup(){
+    private fun showPermissionContextPopup() {
         AlertDialog.Builder(this)
             .setTitle("권한이 필요합니다.")
             .setMessage("사진을 등록하기 위해서 권한이 필요합니다.")
@@ -115,9 +138,7 @@ class RegisterActivity : AppCompatActivity() {
                     Toast.makeText(this, "권한을 거부하였습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
-            else -> {
-
-            }
+            else -> { }
         }
     }
 
