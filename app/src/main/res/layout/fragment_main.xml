@@ -37,7 +37,19 @@
         app:layout_constraintTop_toTopOf="@+id/dogImage"
         app:layout_constraintStart_toEndOf="@+id/dogImage"
         android:text="Name"
-        android:layout_marginStart="20dp"/>
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:layout_marginStart="10dp"/>
+
+    <ImageView
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/male_icon"
+        app:layout_constraintStart_toEndOf="@+id/nameText"
+        app:layout_constraintTop_toTopOf="@id/nameText"
+        app:layout_constraintBottom_toBottomOf="@id/nameText"
+        android:layout_marginStart="5dp"/>
 
     <TextView
         android:id="@+id/ageText"
@@ -46,7 +58,10 @@
         app:layout_constraintStart_toEndOf="@+id/dogImage"
         app:layout_constraintBottom_toBottomOf="@+id/dogImage"
         android:text="10살"
-        android:layout_marginStart="20dp"/>
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="15sp"
+        android:textColor="@color/black"
+        android:layout_marginStart="10dp"/>
 
     <ImageView
         android:id="@+id/emotionImage"
@@ -66,7 +81,10 @@
         app:layout_constraintTop_toBottomOf="@+id/ageText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/weightTitleText"
-        android:layout_marginTop="20dp"/>
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="15sp"
+        android:textColor="@color/black"
+        android:layout_marginTop="30dp"/>
 
     <TextView
         android:id="@+id/weightTitleText"
@@ -76,24 +94,33 @@
         app:layout_constraintTop_toBottomOf="@+id/ageText"
         app:layout_constraintStart_toEndOf="@+id/vaccinationTitleText"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp"/>
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="15sp"
+        android:textColor="@color/black"
+        android:layout_marginTop="30dp"/>
 
     <TextView
         android:id="@+id/vaccinationDateText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/vaccinationTitleText"
-        app:layout_constraintEnd_toStartOf="@+id/weightText"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/vaccinationTitleText"
+        app:layout_constraintEnd_toEndOf="@id/vaccinationTitleText"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="18sp"
+        android:textColor="@color/black"
         android:text="2020년 12월 3일"/>
 
     <TextView
         android:id="@+id/weightText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@+id/vaccinationDateText"
         app:layout_constraintTop_toBottomOf="@+id/weightTitleText"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/weightTitleText"
+        app:layout_constraintEnd_toEndOf="@id/weightTitleText"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="18sp"
+        android:textColor="@color/black"
         android:text="100kg"/>
 
     <TextView
@@ -103,13 +130,172 @@
         app:layout_constraintStart_toStartOf="@+id/dogImage"
         app:layout_constraintTop_toBottomOf="@+id/vaccinationDateText"
         android:text="2023년 5월 1주차"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="15sp"
+        android:textColor="@color/black"
         android:layout_marginTop="20dp"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    
+    <GridLayout
+        android:id="@+id/gridLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:columnCount="7"
         app:layout_constraintTop_toBottomOf="@+id/weekTitleText"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="5dp">
+        <TextView
+            android:id="@+id/monday"
+            android:layout_columnWeight="1"
+            android:text="월"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:gravity="center_horizontal"/>
+        <TextView
+            android:id="@+id/tuesday"
+            android:layout_columnWeight="1"
+            android:text="화"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:gravity="center_horizontal" />
+        <TextView
+            android:id="@+id/wensday"
+            android:layout_columnWeight="1"
+            android:text="수"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:gravity="center_horizontal"/>
+        <TextView
+            android:id="@+id/thursday"
+            android:layout_columnWeight="1"
+            android:text="목"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:gravity="center_horizontal"/>
+        <TextView
+            android:id="@+id/friday"
+            android:layout_columnWeight="1"
+            android:text="금"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:gravity="center_horizontal"/>
+        <TextView
+            android:id="@+id/saturday"
+            android:layout_columnWeight="1"
+            android:text="토"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:gravity="center_horizontal"/>
+        <TextView
+            android:id="@+id/sunday"
+            android:layout_columnWeight="1"
+            android:text="일"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:gravity="center_horizontal"/>
+
+        <TextView
+            android:id="@+id/first"
+            android:layout_columnWeight="1"
+            android:text="12"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:gravity="center_horizontal"/>
+        <TextView
+            android:id="@+id/second"
+            android:layout_columnWeight="1"
+            android:text="13"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:gravity="center_horizontal" />
+        <TextView
+            android:id="@+id/third"
+            android:layout_columnWeight="1"
+            android:text="14"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:gravity="center_horizontal"/>
+        <TextView
+            android:id="@+id/fourth"
+            android:layout_columnWeight="1"
+            android:text="15"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:gravity="center_horizontal"/>
+        <TextView
+            android:id="@+id/fifth"
+            android:layout_columnWeight="1"
+            android:text="16"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:gravity="center_horizontal"/>
+        <TextView
+            android:id="@+id/sixth"
+            android:layout_columnWeight="1"
+            android:text="17"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:gravity="center_horizontal"/>
+        <TextView
+            android:id="@+id/seventh"
+            android:layout_columnWeight="1"
+            android:text="18"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:gravity="center_horizontal"/>
+    </GridLayout>
+
+    <TextView
+        android:id="@+id/eyeDiseaseText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/weekTitleText"
+        app:layout_constraintTop_toBottomOf="@+id/gridLayout"
+        android:layout_marginTop="20dp"
+        android:textSize="20sp"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="@color/black"
+        android:text="안구 질환"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabMain"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_up"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="10dp"/>
+    
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabSub1"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="10dp"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabSub2"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="10dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

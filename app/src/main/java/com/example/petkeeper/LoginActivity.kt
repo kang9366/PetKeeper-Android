@@ -73,19 +73,28 @@ class LoginActivity : AppCompatActivity() {
     //일반 로그인
     private fun initLogin(){
         val intent = Intent(this, RegisterActivity::class.java)
-        startActivity(intent)
+        val email = binding.editEmail.text.toString()
+        val password = binding.editPassword.text.toString()
+        if(email == "" || password == ""){
+            Toast.makeText(this@LoginActivity, "아이디와 비밀번호를 모두 입력해주세요", Toast.LENGTH_SHORT).show()
+        }else{
+            postLoginData(email, password, intent)
+        }
+    }
 
-        RetrofitBuilder.api.getUserInfo("apiTest").enqueue(object : Callback<UserInfo> {
-            override fun onResponse(call: Call<UserInfo>, response: Response<UserInfo>) {
-                val userInfo = response.body()
-                if(userInfo != null){
-                    Log.d("API test", userInfo.id)
-                    Log.d("API test", userInfo.password)
+    private fun postLoginData(email: String, password: String, intent: Intent){
+        RetrofitBuilder.api.postLoginData(email, password).enqueue(object: Callback<Void>{
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                Log.d("Post Login Data", response.toString())
+                if(response.raw().code==200 || response.raw().code==502){
+                    startActivity(intent)
+                }else if(response.raw().code==403){
+                    Toast.makeText(this@LoginActivity, "로그인 실패!", Toast.LENGTH_SHORT).show()
                 }
             }
 
-            override fun onFailure(call: Call<UserInfo>, t: Throwable) {
-                Log.d("API test", "fail")
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.d("Post Login Data", "Login fail")
             }
         })
     }

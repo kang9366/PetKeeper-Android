@@ -10,9 +10,9 @@
         app:cnb_iconColor="@color/navigation_color_mood"/>
 
     <item
-        android:id="@+id/add"
-        android:icon="@drawable/ic_home"
-        android:title="add"
+        android:id="@+id/cam"
+        android:icon="@drawable/ic_cam"
+        android:title="Cam"
         app:cnb_iconColor="@color/navigation_color_add"/>
 
     <item
