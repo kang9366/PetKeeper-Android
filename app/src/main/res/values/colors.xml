@@ -14,4 +14,7 @@
     <color name="navigation_color_habit">#E6A919</color>
     <color name="navigation_color_chart">#008577</color>
     <color name="navigation_color_profile">#1194AA</color>
+
+    <color name="selected">#FAFAC8</color>
+    <color name="non_selected">#00FFFFFF</color>
 </resources>

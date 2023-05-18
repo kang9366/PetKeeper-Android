@@ -1,6 +1,8 @@
 package com.example.petkeeper
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.google.gson.JsonObject
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.model.ClientError
@@ -29,6 +32,7 @@ import com.kakao.sdk.user.UserApiClient
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.profile.NidProfileCallback
 import com.navercorp.nid.profile.data.NidProfileResponse
+import org.json.JSONObject
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -37,6 +41,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+
         googleLoginLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()){ result ->
             val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(result.data)
@@ -68,6 +73,12 @@ class LoginActivity : AppCompatActivity() {
         binding.signUpButton.setOnClickListener {
             initSignUpButton()
         }
+
+        binding.searchIdButton.setOnClickListener {
+            val sharedPref: SharedPreferences = getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+            val data = sharedPref.getString("token", "none")
+            Toast.makeText(this, data.toString(), Toast.LENGTH_SHORT).show()
+        }
     }
 
     //일반 로그인
@@ -83,19 +94,31 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun postLoginData(email: String, password: String, intent: Intent){
-        RetrofitBuilder.api.postLoginData(email, password).enqueue(object: Callback<Void>{
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                Log.d("Post Login Data", response.toString())
+        RetrofitBuilder.api.postLoginData(email, password).enqueue(object: Callback<JsonObject>{
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                val responseData = response.body()
+                val message = responseData?.getAsJsonObject("user")
+                val token = responseData?.get("token")
+
+                Log.d("Post Login Data", message.toString())
+                Log.d("Post Login Data", responseData.toString())
+                Log.d("Post Login Data", token.toString())
+
                 if(response.raw().code==200 || response.raw().code==502){
+                    val sharedPref: SharedPreferences = getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+                    sharedPref.edit().run {
+                        putString("token", token.toString())
+                        commit()
+                    }
                     startActivity(intent)
                 }else if(response.raw().code==403){
                     Toast.makeText(this@LoginActivity, "로그인 실패!", Toast.LENGTH_SHORT).show()
                 }
             }
-
-            override fun onFailure(call: Call<Void>, t: Throwable) {
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
                 Log.d("Post Login Data", "Login fail")
             }
+
         })
     }
 
@@ -142,6 +165,7 @@ class LoginActivity : AppCompatActivity() {
 
         val oauthLoginCallback = object : OAuthLoginCallback {
             override fun onSuccess() {
+                NidOAuthLogin().callProfileApi(profileCallback)
                 NidOAuthLogin().callProfileApi(profileCallback)
             }
             override fun onFailure(httpStatus: Int, message: String) {
