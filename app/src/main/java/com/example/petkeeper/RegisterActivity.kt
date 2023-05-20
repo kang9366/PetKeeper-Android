@@ -52,17 +52,13 @@ class RegisterActivity : AppCompatActivity() {
         val intent = Intent(this@RegisterActivity, MainActivity::class.java)
 
         initGenderButton()
+
         binding.addButton.setOnClickListener {
             initAddPhoto()
         }
 
         binding.registerButton.setOnClickListener {
-            if(checkData()) {
-                initDogData(intent)
-                startActivity(intent)
-            }else{
-                Toast.makeText(this, "모든 정보를 입력해주세요", Toast.LENGTH_SHORT).show()
-            }
+            checkData(intent)
         }
 
         binding.birthButton.setOnClickListener {
@@ -74,12 +70,18 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkData(): Boolean{
-        return binding.editName.text.isNotEmpty() &&
-                binding.editWeight.text.isNotEmpty() &&
-                (binding.maleButton.isSelected || binding.femaleButton.isSelected) &&
-                binding.breedSelect.isSelected &&
-                binding.birthButton.isSelected
+    private fun checkData(intent: Intent){
+        val flag =  binding.editName.text.isNotEmpty() &&
+                    binding.editWeight.text.isNotEmpty() &&
+                    (binding.maleButton.isSelected || binding.femaleButton.isSelected) &&
+                    binding.breedSelect.isSelected &&
+                    binding.birthButton.isSelected
+        if(flag){
+            initDogData(intent)
+            startActivity(intent)
+        }else{
+            Toast.makeText(this, "모든 정보를 입력해주세요", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun initDogData(intent: Intent){
@@ -184,8 +186,6 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
     }
-
-
 
     private fun initSpinner() {
         val builder = AlertDialog.Builder(this)
