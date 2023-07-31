@@ -1,4 +1,4 @@
-package com.example.petkeeper
+package com.example.petkeeper.view.register
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -15,14 +15,15 @@ import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.example.petkeeper.R
 import com.example.petkeeper.databinding.ActivityRegisterBinding
+import com.example.petkeeper.util.binding.BindingActivity
+import com.example.petkeeper.view.main.MainActivity
 import java.io.ByteArrayOutputStream
 import java.util.*
 
-class RegisterActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityRegisterBinding
+class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activity_register) {
     private lateinit var byteArray: ByteArray
 
     @SuppressLint("SimpleDateFormat")
@@ -65,6 +66,7 @@ class RegisterActivity : AppCompatActivity() {
         if(flag){
             initDogData(intent)
             startActivity(intent)
+            finish()
         }else{
             Toast.makeText(this, "모든 정보를 입력해주세요", Toast.LENGTH_SHORT).show()
         }
