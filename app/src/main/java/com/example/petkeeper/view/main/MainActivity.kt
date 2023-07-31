@@ -1,35 +1,19 @@
-package com.example.petkeeper
+package com.example.petkeeper.view.main
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import com.example.petkeeper.R
 import com.example.petkeeper.databinding.ActivityMainBinding
+import com.example.petkeeper.util.binding.BindingActivity
 
-class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
-    var backKeyPressedTime : Long = 0
-
+class MainActivity : BindingActivity<ActivityMainBinding>(R.layout.activity_main) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initNavigationBar()
     }
-
-    override fun onBackPressed() {
-        if(System.currentTimeMillis() > backKeyPressedTime + 2500){
-            backKeyPressedTime = System.currentTimeMillis()
-            Toast.makeText(this, "종료하려면 뒤로가기를 한 번 더 누르세요", Toast.LENGTH_SHORT).show()
-            return;
-        }
-        if(System.currentTimeMillis() <= backKeyPressedTime + 2500){
-            finishAffinity()
-        }
-    }
-
 
     private fun initNavigationBar(){
         fun changeFragment(fragment: Fragment) {
