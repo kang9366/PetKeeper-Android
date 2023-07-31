@@ -1,4 +1,4 @@
-package com.example.petkeeper
+package com.example.petkeeper.view.main
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -10,22 +10,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import androidx.appcompat.app.AlertDialog
+import com.example.petkeeper.util.adapter.Data
+import com.example.petkeeper.R
+import com.example.petkeeper.util.adapter.RecyclerViewAdapter
 import com.example.petkeeper.databinding.FragmentCommunityBinding
+import com.example.petkeeper.util.binding.BindingFragment
 
-class CommunityFragment : Fragment() {
-    private lateinit var binding: FragmentCommunityBinding
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentCommunityBinding.inflate(layoutInflater)
-        return binding.root
-    }
-
+class CommunityFragment : BindingFragment<FragmentCommunityBinding>(R.layout.fragment_community, true) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val recyclerView = binding.recyclerView
+        val recyclerView = binding?.recyclerView
         val item = ArrayList<Data>()
 
         for(i in 0..8){
@@ -33,14 +27,14 @@ class CommunityFragment : Fragment() {
         }
 
         val adapter = RecyclerViewAdapter(item)
-        recyclerView.adapter = adapter
+        recyclerView?.adapter = adapter
 
-        binding.postButton.setImageResource(R.drawable.post)
+        binding?.postButton?.setImageResource(R.drawable.post)
         initPostDialog()
     }
 
     private fun initPostDialog(){
-        binding.postButton.setOnClickListener{
+        binding?.postButton?.setOnClickListener{
             val dialogView = layoutInflater.inflate(R.layout.post_dialog, null)
             val dialog = AlertDialog.Builder(requireContext())
                 .setView(dialogView)
