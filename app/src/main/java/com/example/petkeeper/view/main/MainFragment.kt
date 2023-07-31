@@ -1,4 +1,4 @@
-package com.example.petkeeper
+package com.example.petkeeper.view.main
 
 import android.Manifest.permission.CAMERA
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
@@ -14,66 +14,50 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import androidx.core.content.PermissionChecker.checkPermission
-import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.petkeeper.R
+import com.example.petkeeper.util.api.RetrofitBuilder
 import com.example.petkeeper.databinding.FragmentMainBinding
+import com.example.petkeeper.util.binding.BindingFragment
 import com.google.gson.JsonObject
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 
-class MainFragment : Fragment() {
-    private lateinit var binding: FragmentMainBinding
+class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main, true) {
     private lateinit var name: String
     private lateinit var image: Bitmap
     private var isFabOpen = false
     private lateinit var mainActivity: MainActivity
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentMainBinding.inflate(layoutInflater)
-
-        return binding.root
-    }
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.nameText.text = name
-        binding.dogImage.setImageBitmap(image)
+        binding?.nameText?.text = name
+        binding?.dogImage?.setImageBitmap(image)
 
-        binding.fabMain.apply {
+        binding?.fabMain?.apply {
             bringToFront()
             setOnClickListener {
                 toggleFab()
             }
         }
 
-        binding.dogImage.apply {
+        binding?.dogImage?.apply {
             setOnClickListener {
                 initAddPhoto()
             }
         }
 
-        binding.fabSub1.setOnClickListener {
+        binding?.fabSub1?.setOnClickListener {
             initCamera()
         }
     }
@@ -89,13 +73,13 @@ class MainFragment : Fragment() {
 
     private fun toggleFab() {
         if (isFabOpen) {
-            ObjectAnimator.ofFloat(binding.fabSub1, "translationY", 0f).apply { start() }
-            ObjectAnimator.ofFloat(binding.fabSub2, "translationY", 0f).apply { start() }
-            binding.fabMain.setImageResource(R.drawable.ic_examination)
+            ObjectAnimator.ofFloat(binding?.fabSub1, "translationY", 0f).apply { start() }
+            ObjectAnimator.ofFloat(binding?.fabSub2, "translationY", 0f).apply { start() }
+            binding?.fabMain?.setImageResource(R.drawable.ic_examination)
         } else {
-            ObjectAnimator.ofFloat(binding.fabSub1, "translationY", -200f).apply { start() }
-            ObjectAnimator.ofFloat(binding.fabSub2, "translationY", -400f).apply { start() }
-            binding.fabMain.setImageResource(R.drawable.ic_down)
+            ObjectAnimator.ofFloat(binding?.fabSub1, "translationY", -200f).apply { start() }
+            ObjectAnimator.ofFloat(binding?.fabSub2, "translationY", -400f).apply { start() }
+            binding?.fabMain?.setImageResource(R.drawable.ic_down)
         }
         isFabOpen = !isFabOpen
     }
@@ -151,7 +135,7 @@ class MainFragment : Fragment() {
         when(requestCode) {
             2000 -> {
                 if(selectedImageUri != null){
-                    binding.dogImage.setImageURI(selectedImageUri)
+                    binding?.dogImage?.setImageURI(selectedImageUri)
                 }else{
                     Toast.makeText(mainActivity, "사진을 가져오지 못했습니다", Toast.LENGTH_SHORT).show()
                 }
@@ -219,7 +203,6 @@ class MainFragment : Fragment() {
     private fun postImage(body: MultipartBody.Part){
         RetrofitBuilder.api.postEyeImage(body).enqueue(object: Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-
                 Log.d("post eye image", response.toString())
             }
 
