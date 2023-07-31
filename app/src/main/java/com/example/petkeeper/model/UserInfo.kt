@@ -1,4 +1,4 @@
-package com.example.petkeeper
+package com.example.petkeeper.model
 
 data class UserInfo(
     val id: String,

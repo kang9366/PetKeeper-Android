@@ -1,4 +1,4 @@
-package com.example.petkeeper
+package com.example.petkeeper.util.api
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -10,7 +10,6 @@ object RetrofitBuilder{
             .baseUrl("https://petkeeper.co.kr/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-
         api = retrofit.create(RetrofitService::class.java)
     }
 }

@@ -1,9 +1,10 @@
-package com.example.petkeeper
+package com.example.petkeeper.view.signup
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
+import com.example.petkeeper.R
 
 class SignUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

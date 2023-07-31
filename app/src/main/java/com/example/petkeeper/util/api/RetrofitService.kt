@@ -1,9 +1,8 @@
-package com.example.petkeeper
+package com.example.petkeeper.util.api
 
+import com.example.petkeeper.model.UserInfo
 import com.google.gson.JsonObject
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.http.*
 

@@ -1,4 +1,4 @@
-package com.example.petkeeper
+package com.example.petkeeper.view.login
 
 import android.content.Context
 import android.content.Intent
@@ -9,9 +9,16 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import com.example.petkeeper.view.main.MainActivity
+import com.example.petkeeper.R
 import com.example.petkeeper.databinding.ActivityLoginBinding
+import com.example.petkeeper.util.api.RetrofitBuilder
+import com.example.petkeeper.util.binding.BindingActivity
+import com.example.petkeeper.view.dialog.FinishDialog
+import com.example.petkeeper.view.signup.SignUpActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -32,12 +39,16 @@ import com.kakao.sdk.user.UserApiClient
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.profile.NidProfileCallback
 import com.navercorp.nid.profile.data.NidProfileResponse
-import org.json.JSONObject
 
-class LoginActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityLoginBinding
+class LoginActivity : BindingActivity<ActivityLoginBinding>(R.layout.activity_login) {
     private var mGoogleSignInClient : GoogleSignInClient? = null
     private lateinit var googleLoginLauncher: ActivityResultLauncher<Intent>
+    private val callback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            val dialog = FinishDialog(this@LoginActivity)
+            dialog.initDialog()
+        }
+    }
 
     override fun onStart() {
         super.onStart()
@@ -51,8 +62,8 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+
+        this.onBackPressedDispatcher.addCallback(this, callback)
 
         binding.loginButton.setOnClickListener {
             initLogin()
@@ -73,17 +84,10 @@ class LoginActivity : AppCompatActivity() {
         binding.signUpButton.setOnClickListener {
             initSignUpButton()
         }
-
-        binding.searchIdButton.setOnClickListener {
-            val sharedPref: SharedPreferences = getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
-            val data = sharedPref.getString("token", "none")
-            Toast.makeText(this, data.toString(), Toast.LENGTH_SHORT).show()
-        }
     }
 
     //일반 로그인
     private fun initLogin(){
-        val intent = Intent(this, RegisterActivity::class.java)
         val email = binding.editEmail.text.toString()
         val password = binding.editPassword.text.toString()
         if(email == "" || password == ""){
