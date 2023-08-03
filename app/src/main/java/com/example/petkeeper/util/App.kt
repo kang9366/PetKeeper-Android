@@ -2,13 +2,13 @@ package com.example.petkeeper.util
 
 import android.app.Application
 
-class PetKeeper: Application() {
+class App: Application() {
     companion object {
         lateinit var preferences: PreferenceUtil
     }
 
     override fun onCreate() {
-        preferences = PreferenceUtil(applicationContext)
         super.onCreate()
+        preferences = PreferenceUtil(applicationContext)
     }
 }
