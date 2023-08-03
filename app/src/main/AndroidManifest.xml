@@ -14,6 +14,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
+        android:name=".util.App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -34,10 +35,8 @@
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data
                     android:host="oauth"
                     android:scheme="kakaob4273c09490711d3f80aa800a7888529" />
@@ -45,7 +44,7 @@
         </activity>
         <activity
             android:name=".view.signup.SignUpActivity"
-            android:exported="false">
+            android:exported="true">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
