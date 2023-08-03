@@ -3,7 +3,6 @@ package com.example.petkeeper.view.login
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -15,9 +14,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.example.petkeeper.view.main.MainActivity
 import com.example.petkeeper.R
 import com.example.petkeeper.databinding.ActivityLoginBinding
+import com.example.petkeeper.util.App
 import com.example.petkeeper.util.api.RetrofitBuilder
 import com.example.petkeeper.util.binding.BindingActivity
 import com.example.petkeeper.view.dialog.FinishDialog
+import com.example.petkeeper.view.register.RegisterActivity
 import com.example.petkeeper.view.signup.SignUpActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -62,8 +63,13 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(R.layout.activity_lo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         this.onBackPressedDispatcher.addCallback(this, callback)
+
+        if(App.preferences.isRegistered){
+            Intent(this@LoginActivity, RegisterActivity::class.java).apply {
+                startActivity(this)
+            }
+        }
 
         binding.loginButton.setOnClickListener {
             initLogin()
@@ -90,6 +96,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(R.layout.activity_lo
     private fun initLogin(){
         val email = binding.editEmail.text.toString()
         val password = binding.editPassword.text.toString()
+        val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
         if(email == "" || password == ""){
             Toast.makeText(this@LoginActivity, "아이디와 비밀번호를 모두 입력해주세요", Toast.LENGTH_SHORT).show()
         }else{
@@ -115,6 +122,8 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(R.layout.activity_lo
                         commit()
                     }
                     startActivity(intent)
+                    finish()
+                    App.preferences.isRegistered = true
                 }else if(response.raw().code==403){
                     Toast.makeText(this@LoginActivity, "로그인 실패!", Toast.LENGTH_SHORT).show()
                 }

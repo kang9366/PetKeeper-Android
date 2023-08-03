@@ -33,7 +33,6 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val intent = Intent(this@RegisterActivity, MainActivity::class.java)
