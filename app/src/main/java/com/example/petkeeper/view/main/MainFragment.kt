@@ -77,8 +77,8 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
             ObjectAnimator.ofFloat(binding?.fabSub2, "translationY", 0f).apply { start() }
             binding?.fabMain?.setImageResource(R.drawable.ic_examination)
         } else {
-            ObjectAnimator.ofFloat(binding?.fabSub1, "translationY", -200f).apply { start() }
-            ObjectAnimator.ofFloat(binding?.fabSub2, "translationY", -400f).apply { start() }
+            ObjectAnimator.ofFloat(binding?.fabSub1, "translationY", -250f).apply { start() }
+            ObjectAnimator.ofFloat(binding?.fabSub2, "translationY", -500f).apply { start() }
             binding?.fabMain?.setImageResource(R.drawable.ic_down)
         }
         isFabOpen = !isFabOpen
