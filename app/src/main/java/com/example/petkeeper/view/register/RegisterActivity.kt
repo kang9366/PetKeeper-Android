@@ -6,8 +6,6 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -18,6 +16,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.example.petkeeper.R
 import com.example.petkeeper.databinding.ActivityRegisterBinding
+import com.example.petkeeper.util.App
 import com.example.petkeeper.util.binding.BindingActivity
 import com.example.petkeeper.view.main.MainActivity
 import java.io.ByteArrayOutputStream
@@ -25,6 +24,7 @@ import java.util.*
 
 class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activity_register) {
     private lateinit var byteArray: ByteArray
+    private var age: Int = 0
 
     @SuppressLint("SimpleDateFormat")
     override fun onStart() {
@@ -63,7 +63,12 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
                     binding.breedSelect.isSelected &&
                     binding.birthButton.isSelected
         if(flag){
-            initDogData(intent)
+            App.preferences.isRegistered = true
+            App.preferences.Pet().name = binding.editName.text.toString()
+            App.preferences.Pet().weight =  binding.editWeight.text.toString().toInt()
+            App.preferences.Pet().age = age
+            if(binding.maleButton.isSelected){ App.preferences.Pet().gender = "male" }
+            else{ App.preferences.Pet().gender = "female" }
             startActivity(intent)
             finish()
         }else{
@@ -72,18 +77,16 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
     }
 
     private fun initDogData(intent: Intent){
-        try {
-            intent.putExtra("image", byteArray)
-        } catch (e: UninitializedPropertyAccessException) {
-            val drawable: Drawable = ContextCompat.getDrawable(applicationContext, R.drawable.logo)!!
-            val bitmap = (drawable as BitmapDrawable).bitmap
-            val byteArrayOutputStream = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
-            byteArray = byteArrayOutputStream.toByteArray()
-            intent.putExtra("image", byteArray)
-        }
-        intent.putExtra("weight", binding.editWeight.text.toString())
-        intent.putExtra("name", binding.editName.text.toString())
+//        try {
+//            intent.putExtra("image", byteArray)
+//        } catch (e: UninitializedPropertyAccessException) {
+//            val drawable: Drawable = ContextCompat.getDrawable(applicationContext, R.drawable.logo)!!
+//            val bitmap = (drawable as BitmapDrawable).bitmap
+//            val byteArrayOutputStream = ByteArrayOutputStream()
+//            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+//            byteArray = byteArrayOutputStream.toByteArray()
+//            intent.putExtra("image", byteArray)
+//        }
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
@@ -189,11 +192,12 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
 
     private fun initBirth(){
         val cal = Calendar.getInstance()
-        val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
-            val dateString = "${year}년 ${month+1}월 ${dayOfMonth}일"
+        val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, day ->
+            val dateString = "${year}년 ${month+1}월 ${day}일"
             binding.birthButton.apply {
                 text = dateString
                 isSelected = true
+                age = calculateAge(year, month+1, day)
             }
         }
         DatePickerDialog(this,
@@ -202,6 +206,16 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
             cal.get(Calendar.MONTH),
             cal.get(Calendar.DAY_OF_MONTH)).
         show()
+    }
+
+    val calculateAge: (year: Int, month: Int, day: Int) -> Int = { year, month, day ->
+        val currentDate = Calendar.getInstance()
+        val currentYear = currentDate.get(Calendar.YEAR)
+        val currentMonth = currentDate.get(Calendar.MONTH) + 1
+        val currentDay = currentDate.get(Calendar.DAY_OF_MONTH)
+        var age = currentYear - year
+        if (currentMonth < month || (currentMonth == month && currentDay < day)) age--
+        age
     }
 
     @SuppressLint("UseCompatLoadingForColorStateLists")

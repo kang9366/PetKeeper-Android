@@ -15,7 +15,7 @@
     <color name="navigation_color_chart">#008577</color>
     <color name="navigation_color_profile">#1194AA</color>
 
-    <color name="selected">#FAFAC8</color>
+    <color name="selected">#545775</color>
     <color name="non_selected">#00FFFFFF</color>
     <color name="button_color">#F2796B</color>
 </resources>
