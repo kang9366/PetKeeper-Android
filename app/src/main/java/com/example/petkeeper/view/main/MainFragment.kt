@@ -3,6 +3,7 @@ package com.example.petkeeper.view.main
 import android.Manifest.permission.CAMERA
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -21,6 +22,7 @@ import androidx.core.content.ContextCompat
 import com.example.petkeeper.R
 import com.example.petkeeper.util.api.RetrofitBuilder
 import com.example.petkeeper.databinding.FragmentMainBinding
+import com.example.petkeeper.util.App
 import com.example.petkeeper.util.binding.BindingFragment
 import com.google.gson.JsonObject
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -38,11 +40,19 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
     private var isFabOpen = false
     private lateinit var mainActivity: MainActivity
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding?.nameText?.text = name
-        binding?.dogImage?.setImageBitmap(image)
+        binding?.nameText?.text = App.preferences.Pet().name
+        binding?.weightText?.text = "${App.preferences.Pet().weight}kg"
+        binding?.ageText?.text = "${App.preferences.Pet().age}살"
+
+        if(App.preferences.Pet().gender == "male"){
+            binding?.genderImage?.setImageResource(R.drawable.male_icon)
+        }else{
+            binding?.genderImage?.setImageResource(R.drawable.female_icon)
+        }
 
         binding?.fabMain?.apply {
             bringToFront()
@@ -64,9 +74,9 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        name = arguments?.getString("name").toString()
-        val bitmap = arguments?.getByteArray("image")!!
-        image = BitmapFactory.decodeByteArray(bitmap, 0, bitmap.size)
+//        name = arguments?.getString("name").toString()
+//        val bitmap = arguments?.getByteArray("image")!!
+//        image = BitmapFactory.decodeByteArray(bitmap, 0, bitmap.size)
 
         mainActivity = context as MainActivity
     }
