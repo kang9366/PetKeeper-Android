@@ -16,31 +16,25 @@ class MainActivity : BindingActivity<ActivityMainBinding>(R.layout.activity_main
     }
 
     private fun initNavigationBar(){
-        fun changeFragment(fragment: Fragment) {
-            val name = intent.getStringExtra("name")
-            val image = intent.getByteArrayExtra("image")
-
-            val bundle = Bundle()
-            bundle.putString("name", name)
-            bundle.putByteArray("image", image)
-            val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-            fragment.arguments = bundle
-            fragmentTransaction.replace(R.id.fragment, fragment)
-            fragmentTransaction.commit()
-        }
-
-        changeFragment(MainFragment())
+        changeFragment<MainFragment>()
         binding.bottomNav.run {
             setItemSelected(R.id.home)
             setOnItemSelectedListener { item ->
                 when (item){
-                    R.id.home -> changeFragment(MainFragment())
-                    R.id.cam -> changeFragment(CamFragment())
-                    R.id.map -> changeFragment(MapFragment())
-                    R.id.community -> changeFragment(CommunityFragment())
-                    R.id.profile -> changeFragment(ProfileFragment())
+                    R.id.home -> changeFragment<MainFragment>()
+                    R.id.cam -> changeFragment<CamFragment>()
+                    R.id.map -> changeFragment<MapFragment>()
+                    R.id.community -> changeFragment<CommunityFragment>()
+                    R.id.profile -> changeFragment<ProfileFragment>()
                 }
             }
         }
+    }
+
+    private inline fun <reified T: Fragment> changeFragment() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment, T::class.java.newInstance())
+            .commit()
     }
 }
