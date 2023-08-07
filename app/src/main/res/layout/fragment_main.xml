@@ -44,6 +44,7 @@
             android:layout_marginStart="10dp"/>
 
         <ImageView
+            android:id="@+id/genderImage"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:src="@drawable/male_icon"
