@@ -80,4 +80,7 @@ dependencies {
 
     //kakao map
     implementation files('libs/libDaumMapAndroid.jar')
+
+    //lottie animation
+    implementation 'com.airbnb.android:lottie:5.0.2'
 }
