@@ -65,12 +65,6 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(R.layout.activity_lo
         super.onCreate(savedInstanceState)
         this.onBackPressedDispatcher.addCallback(this, callback)
 
-        if(App.preferences.isRegistered){
-            Intent(this@LoginActivity, RegisterActivity::class.java).apply {
-                startActivity(this)
-            }
-        }
-
         binding.loginButton.setOnClickListener {
             initLogin()
         }
@@ -123,7 +117,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(R.layout.activity_lo
                     }
                     startActivity(intent)
                     finish()
-                    App.preferences.isRegistered = true
+                    App.preferences.isLogin = true
                 }else if(response.raw().code==403){
                     Toast.makeText(this@LoginActivity, "로그인 실패!", Toast.LENGTH_SHORT).show()
                 }
