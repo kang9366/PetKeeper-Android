@@ -18,4 +18,6 @@
     <color name="selected">#545775</color>
     <color name="non_selected">#00FFFFFF</color>
     <color name="button_color">#F2796B</color>
+    <color name="selected_color">#FF3366</color>
+    <color name="unselected_color">#C0C0C0</color>
 </resources>
