@@ -23,6 +23,9 @@ import com.example.petkeeper.R
 import com.example.petkeeper.util.api.RetrofitBuilder
 import com.example.petkeeper.databinding.FragmentMainBinding
 import com.example.petkeeper.util.App
+import com.example.petkeeper.util.adapter.DateAdapter
+import com.example.petkeeper.util.adapter.DateItem
+import com.example.petkeeper.util.adapter.RecyclerViewAdapter
 import com.example.petkeeper.util.binding.BindingFragment
 import com.google.gson.JsonObject
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -33,12 +36,15 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 import java.io.FileOutputStream
+import java.util.Calendar
 
 class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main, true) {
     private lateinit var name: String
     private lateinit var image: Bitmap
     private var isFabOpen = false
     private lateinit var mainActivity: MainActivity
+    val calendar: Calendar = Calendar.getInstance()
+    private val item = ArrayList<DateItem>()
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,6 +76,15 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
         binding?.fabSub1?.setOnClickListener {
             initCamera()
         }
+
+        binding?.yearMonthText?.text = "${calendar.get(Calendar.YEAR)}년 ${calendar.get(Calendar.MONTH)+1}월"
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+        for(i in 1 ..calendar.getActualMaximum(Calendar.DAY_OF_MONTH)){
+            item.add(DateItem(i, getDayOfWeek(calendar.get(Calendar.DAY_OF_WEEK))))
+            calendar.add(Calendar.DAY_OF_MONTH, 1)
+        }
+        val adapter = DateAdapter(item)
+        binding?.dateRecyclerView?.adapter = adapter
     }
 
     override fun onAttach(context: Context) {
@@ -220,5 +235,17 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
                 Log.d("post eye image", t.message.toString())
             }
         })
+    }
+    private fun getDayOfWeek(dayOfWeek: Int): String {
+        return when (dayOfWeek) {
+            Calendar.SUNDAY -> "일"
+            Calendar.MONDAY -> "월"
+            Calendar.TUESDAY -> "화"
+            Calendar.WEDNESDAY -> "수"
+            Calendar.THURSDAY -> "목"
+            Calendar.FRIDAY -> "금"
+            Calendar.SATURDAY -> "토"
+            else -> ""
+        }
     }
 }
