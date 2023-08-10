@@ -74,7 +74,6 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(R.layout.activity_lo
             CoroutineScope(Dispatchers.Main).launch {
                 binding.load.playAnimation()
                 initLogin()
-
             }
         }
 
