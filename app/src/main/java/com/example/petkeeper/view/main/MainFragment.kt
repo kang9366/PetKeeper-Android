@@ -9,7 +9,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Bundle
@@ -25,8 +24,9 @@ import com.example.petkeeper.databinding.FragmentMainBinding
 import com.example.petkeeper.util.App
 import com.example.petkeeper.util.adapter.DateAdapter
 import com.example.petkeeper.util.adapter.DateItem
-import com.example.petkeeper.util.adapter.RecyclerViewAdapter
+import com.example.petkeeper.util.adapter.OnItemClickListener
 import com.example.petkeeper.util.binding.BindingFragment
+import com.example.petkeeper.view.dialog.DetailDialog
 import com.google.gson.JsonObject
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -53,6 +53,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
         binding?.nameText?.text = App.preferences.Pet().name
         binding?.weightText?.text = "${App.preferences.Pet().weight}kg"
         binding?.ageText?.text = "${App.preferences.Pet().age}살"
+        binding?.breedText?.text = App.preferences.Pet().breed
 
         if(App.preferences.Pet().gender == "male"){
             binding?.genderImage?.setImageResource(R.drawable.male_icon)
@@ -84,6 +85,12 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
             calendar.add(Calendar.DAY_OF_MONTH, 1)
         }
         val adapter = DateAdapter(item)
+        adapter.setOnItemClickListener(object : OnItemClickListener{
+            override fun onItemClick(v: View, data: DateItem, pos: Int) {
+                val dialog = DetailDialog(mainActivity)
+                dialog.initDialog(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, data)
+            }
+        })
         binding?.dateRecyclerView?.adapter = adapter
     }
 
@@ -236,6 +243,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
             }
         })
     }
+
     private fun getDayOfWeek(dayOfWeek: Int): String {
         return when (dayOfWeek) {
             Calendar.SUNDAY -> "일"

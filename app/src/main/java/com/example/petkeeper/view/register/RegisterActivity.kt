@@ -183,6 +183,7 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
             setItems(R.array.category_array){
                     _, p1 ->
                 binding.breedSelect.text = resources.getStringArray(R.array.category_array)[p1]
+                App.preferences.Pet().breed = resources.getStringArray(R.array.category_array)[p1]
                 binding.breedSelect.isSelected = true
             }
             create()

@@ -24,7 +24,7 @@ class RecyclerViewAdapter(private val items: ArrayList<Data>): RecyclerView.Adap
         return ViewHolder(inflatedView)
     }
 
-    inner class ViewHolder(v: View): RecyclerView.ViewHolder(v){
+    inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private var view: View = v
         val name = view.findViewById<TextView>(R.id.userName)
     }

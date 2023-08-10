@@ -1,8 +1,6 @@
 package com.example.petkeeper.view.dialog
 
-import android.Manifest
 import android.app.Dialog
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
@@ -11,8 +9,6 @@ import android.view.Window
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.example.petkeeper.databinding.PostDialogBinding
 

@@ -65,6 +65,17 @@
             android:textColor="@color/black"
             android:layout_marginStart="10dp"/>
 
+        <TextView
+            android:id="@+id/breed_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/ageText"
+            app:layout_constraintBottom_toBottomOf="@+id/dogImage"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:layout_marginStart="10dp"/>
+
         <ImageView
             android:id="@+id/emotionImage"
             android:layout_width="40dp"
