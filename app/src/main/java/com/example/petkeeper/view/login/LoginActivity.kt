@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -40,6 +41,9 @@ import com.kakao.sdk.user.UserApiClient
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.profile.NidProfileCallback
 import com.navercorp.nid.profile.data.NidProfileResponse
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class LoginActivity : BindingActivity<ActivityLoginBinding>(R.layout.activity_login) {
     private var mGoogleSignInClient : GoogleSignInClient? = null
@@ -66,7 +70,12 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(R.layout.activity_lo
         this.onBackPressedDispatcher.addCallback(this, callback)
 
         binding.loginButton.setOnClickListener {
-            initLogin()
+            binding.load.visibility = View.VISIBLE
+            CoroutineScope(Dispatchers.Main).launch {
+                binding.load.playAnimation()
+                initLogin()
+
+            }
         }
 
         binding.naverLoginButton.setOnClickListener {

@@ -79,7 +79,11 @@ dependencies {
 
     //kakao map
     implementation files('libs/libDaumMapAndroid.jar')
-
+    
+    //lottie animation
+    implementation 'com.airbnb.android:lottie:5.0.2'
+    
+    
     //camerax
     implementation 'androidx.camera:camera-view:1.2.3'
     implementation 'androidx.camera:camera-lifecycle:1.2.3'
