@@ -9,21 +9,21 @@ import com.example.petkeeper.databinding.DetailDialogBinding
 import com.example.petkeeper.util.adapter.DateItem
 import com.example.petkeeper.util.adapter.ViewPagerAdapter
 
-class DetailDialog(private val context : AppCompatActivity) {
-    private lateinit var binding: DetailDialogBinding
+class DetailDialog(context : AppCompatActivity) {
+    private val binding = DetailDialogBinding.inflate(context.layoutInflater)
     private val dialog = Dialog(context)
+    private val viewPagerAdapter = ViewPagerAdapter(context)
 
     @SuppressLint("SetTextI18n")
     fun initDialog(year: Int, month: Int, day: DateItem){
-        binding = DetailDialogBinding.inflate(context.layoutInflater)
-        val viewPagerAdapter = ViewPagerAdapter(context)
-        viewPagerAdapter.addFragment(DetailInfoDialog())
-        viewPagerAdapter.addFragment(DetailExaminationDialog())
-
-        binding.viewPager.apply {
-            adapter = viewPagerAdapter
-        }
+        binding.viewPager.adapter = viewPagerAdapter
         binding.indicator.setViewPager(binding.viewPager)
+        binding.titleText.text = "${year}년 ${month}월 ${day.day}일"
+
+        viewPagerAdapter.apply {
+            addFragment(DetailInfoDialog())
+            addFragment(DetailExaminationDialog())
+        }
 
         dialog.apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -32,8 +32,6 @@ class DetailDialog(private val context : AppCompatActivity) {
                 setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             }
         }.show()
-
-        binding.titleText.text = "${year}년 ${month}월 ${day.day}요일"
 
         binding.closeButton.setOnClickListener {
             dialog.dismiss()
