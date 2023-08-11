@@ -8,17 +8,15 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.petkeeper.databinding.FinishDialogBinding
 
 class FinishDialog(private val context : AppCompatActivity) {
-    private lateinit var binding : FinishDialogBinding
+    private val binding = FinishDialogBinding.inflate(context.layoutInflater)
     private val dialog = Dialog(context)
 
     fun initDialog() {
-        binding = FinishDialogBinding.inflate(context.layoutInflater)
         dialog.apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(binding.root)
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
-//        dialog.setCancelable(false)
 
         binding.yesButton.setOnClickListener {
             context.finish()
