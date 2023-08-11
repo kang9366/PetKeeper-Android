@@ -42,7 +42,7 @@ import java.util.Calendar
 class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main, true) {
     private var isFabOpen = false
     private lateinit var context: MainActivity
-    private val item = ArrayList<DateItem>()
+    private var item = ArrayList<DateItem>()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -53,16 +53,8 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding?.nameText?.text = preferences.Pet().name
-        binding?.weightText?.text = "${preferences.Pet().weight}kg"
-        binding?.ageText?.text = "${preferences.Pet().age}살"
-        binding?.breedText?.text = preferences.Pet().breed
-
-        if(preferences.Pet().gender == "male"){
-            binding?.genderImage?.setImageResource(R.drawable.male_icon)
-        }else{
-            binding?.genderImage?.setImageResource(R.drawable.female_icon)
-        }
+        initInformation()
+        initRecyclerView()
 
         binding?.fabMain?.apply {
             bringToFront()
@@ -71,23 +63,39 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
             }
         }
 
-        binding?.dogImage?.apply {
-            setOnClickListener {
-                initAddPhoto()
-            }
+        binding?.dogImage?.setOnClickListener {
+            initAddPhoto()
         }
 
         binding?.fabSub1?.setOnClickListener {
             initCamera()
         }
+    }
 
+    @SuppressLint("SetTextI18n")
+    private fun initInformation(){
+        binding?.nameText?.text = preferences.Pet().name
+        binding?.weightText?.text = "${preferences.Pet().weight}kg"
+        binding?.ageText?.text = "${preferences.Pet().age}살"
+        binding?.breedText?.text = preferences.Pet().breed
+        if(preferences.Pet().gender == "male"){
+            binding?.genderImage?.setImageResource(R.drawable.male_icon)
+        }else{
+            binding?.genderImage?.setImageResource(R.drawable.female_icon)
+        }
         binding?.yearMonthText?.text = "${calendar.get(Calendar.YEAR)}년 ${calendar.get(Calendar.MONTH)+1}월"
+    }
+
+    private fun initDateItem(){
         calendar.set(Calendar.DAY_OF_MONTH, 1)
         for(i in 1 ..calendar.getActualMaximum(Calendar.DAY_OF_MONTH)){
             item.add(DateItem(i, getDayOfWeek(calendar.get(Calendar.DAY_OF_WEEK))))
             calendar.add(Calendar.DAY_OF_MONTH, 1)
         }
+    }
 
+    private fun initRecyclerView() {
+        initDateItem()
         val adapter = DateAdapter(item)
         adapter.setOnItemClickListener(object : OnItemClickListener{
             override fun onItemClick(v: View, data: DateItem, pos: Int) {
