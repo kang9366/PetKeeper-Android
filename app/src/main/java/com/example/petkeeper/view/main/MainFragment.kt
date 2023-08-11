@@ -21,7 +21,8 @@ import androidx.core.content.ContextCompat
 import com.example.petkeeper.R
 import com.example.petkeeper.util.api.RetrofitBuilder
 import com.example.petkeeper.databinding.FragmentMainBinding
-import com.example.petkeeper.util.App
+import com.example.petkeeper.util.App.Companion.calendar
+import com.example.petkeeper.util.App.Companion.preferences
 import com.example.petkeeper.util.adapter.DateAdapter
 import com.example.petkeeper.util.adapter.DateItem
 import com.example.petkeeper.util.adapter.OnItemClickListener
@@ -39,23 +40,25 @@ import java.io.FileOutputStream
 import java.util.Calendar
 
 class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main, true) {
-    private lateinit var name: String
-    private lateinit var image: Bitmap
     private var isFabOpen = false
-    private lateinit var mainActivity: MainActivity
-    val calendar: Calendar = Calendar.getInstance()
+    private lateinit var context: MainActivity
     private val item = ArrayList<DateItem>()
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        this.context = context as MainActivity
+    }
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding?.nameText?.text = App.preferences.Pet().name
-        binding?.weightText?.text = "${App.preferences.Pet().weight}kg"
-        binding?.ageText?.text = "${App.preferences.Pet().age}살"
-        binding?.breedText?.text = App.preferences.Pet().breed
+        binding?.nameText?.text = preferences.Pet().name
+        binding?.weightText?.text = "${preferences.Pet().weight}kg"
+        binding?.ageText?.text = "${preferences.Pet().age}살"
+        binding?.breedText?.text = preferences.Pet().breed
 
-        if(App.preferences.Pet().gender == "male"){
+        if(preferences.Pet().gender == "male"){
             binding?.genderImage?.setImageResource(R.drawable.male_icon)
         }else{
             binding?.genderImage?.setImageResource(R.drawable.female_icon)
@@ -84,23 +87,15 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
             item.add(DateItem(i, getDayOfWeek(calendar.get(Calendar.DAY_OF_WEEK))))
             calendar.add(Calendar.DAY_OF_MONTH, 1)
         }
+
         val adapter = DateAdapter(item)
         adapter.setOnItemClickListener(object : OnItemClickListener{
             override fun onItemClick(v: View, data: DateItem, pos: Int) {
-                val dialog = DetailDialog(mainActivity)
+                val dialog = DetailDialog(context)
                 dialog.initDialog(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, data)
             }
         })
         binding?.dateRecyclerView?.adapter = adapter
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-//        name = arguments?.getString("name").toString()
-//        val bitmap = arguments?.getByteArray("image")!!
-//        image = BitmapFactory.decodeByteArray(bitmap, 0, bitmap.size)
-
-        mainActivity = context as MainActivity
     }
 
     private fun toggleFab() {
@@ -119,7 +114,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
     private fun initCamera() {
         when {
             ContextCompat.checkSelfPermission(
-                mainActivity,
+                context,
                 CAMERA
             ) == PackageManager.PERMISSION_GRANTED -> {
                 runCamera()
@@ -136,7 +131,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
     private fun initAddPhoto(){
         when {
             ContextCompat.checkSelfPermission(
-                mainActivity,
+                context,
                 READ_EXTERNAL_STORAGE
             ) == PackageManager.PERMISSION_GRANTED -> {
                 navigatePhoto()
@@ -150,9 +145,9 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
         }
     }
 
-    fun rotateBitmap(bitmap: Bitmap, degrees: Float): Bitmap {
+    private fun rotateBitmap(bitmap: Bitmap): Bitmap {
         val matrix = Matrix()
-        matrix.postRotate(degrees)
+        matrix.postRotate(90f)
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
 
@@ -169,14 +164,14 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
                 if(selectedImageUri != null){
                     binding?.dogImage?.setImageURI(selectedImageUri)
                 }else{
-                    Toast.makeText(mainActivity, "사진을 가져오지 못했습니다", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "사진을 가져오지 못했습니다", Toast.LENGTH_SHORT).show()
                 }
             }
 
             3000 -> {
                 val extras = data?.extras
                 val bitmap = extras?.get("data") as Bitmap?
-                val rotatedBitmap = rotateBitmap(bitmap!!, 90f)
+                val rotatedBitmap = rotateBitmap(bitmap!!)
                 val file: File = convertBitmapToFile(rotatedBitmap)
 
                 val survey = RequestBody.create("image/*".toMediaTypeOrNull(), file)
@@ -185,13 +180,13 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
             }
 
             else -> {
-                Toast.makeText(mainActivity, "사진을 가져오지 못했습니다", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "사진을 가져오지 못했습니다", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     private fun showPermissionContextPopup(permission: String) {
-        AlertDialog.Builder(mainActivity)
+        AlertDialog.Builder(context)
             .setTitle("권한이 필요합니다.")
             .setMessage("사진을 등록하기 위해서 권한이 필요합니다.")
             .setPositiveButton("동의하기") { _, _ ->
@@ -213,20 +208,8 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
         startActivityForResult(intent, 3000)
     }
 
-    private fun getAbsolutePathFromUri(uri: Uri, context: Context): String? {
-        val projection = arrayOf(MediaStore.Images.Media.DATA)
-        var path: String? = null
-        context.contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
-            if (cursor.moveToFirst()) {
-                val columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-                path = cursor.getString(columnIndex)
-            }
-        }
-        return path
-    }
-
     private fun convertBitmapToFile(bitmap: Bitmap): File{
-        val file = File(mainActivity.filesDir, "picture")
+        val file = File(context.filesDir, "picture")
         val output = FileOutputStream(file)
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output)
         return file
