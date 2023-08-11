@@ -13,13 +13,11 @@ import androidx.fragment.app.FragmentActivity
 import com.example.petkeeper.databinding.PostDialogBinding
 
 class PostDialog(val context: FragmentActivity) {
-    private lateinit var binding: PostDialogBinding
+    private val binding = PostDialogBinding.inflate(context.layoutInflater)
+
     private val dialog = Dialog(context)
-    private var cameraCallback: (() -> Unit)? = null
 
     fun initDialog(pickMedia: ActivityResultLauncher<PickVisualMediaRequest>, cameraCallback: () -> Unit){
-        binding = PostDialogBinding.inflate(context.layoutInflater)
-
         dialog.apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(binding.root)
