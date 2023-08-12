@@ -15,7 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.example.petkeeper.view.main.MainActivity
 import com.example.petkeeper.R
 import com.example.petkeeper.databinding.ActivityLoginBinding
-import com.example.petkeeper.util.App
+import com.example.petkeeper.util.App.Companion.preferences
 import com.example.petkeeper.util.api.RetrofitBuilder
 import com.example.petkeeper.util.binding.BindingActivity
 import com.example.petkeeper.view.dialog.FinishDialog
@@ -118,22 +118,17 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(R.layout.activity_lo
                 Log.d("Post Login Data", token.toString())
 
                 if(response.raw().code==200 || response.raw().code==502){
-                    val sharedPref: SharedPreferences = getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
-                    sharedPref.edit().run {
-                        putString("token", token.toString())
-                        commit()
-                    }
+                    preferences.token = token.toString()
+                    preferences.isLogin = true
                     startActivity(intent)
                     finish()
-                    App.preferences.isLogin = true
                 }else if(response.raw().code==403){
-                    Toast.makeText(this@LoginActivity, "로그인 실패!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@LoginActivity, "로그인 실패", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
                 Log.d("Post Login Data", "Login fail")
             }
-
         })
     }
 
