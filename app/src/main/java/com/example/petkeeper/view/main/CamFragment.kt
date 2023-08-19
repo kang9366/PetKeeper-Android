@@ -1,5 +1,7 @@
 package com.example.petkeeper.view.main
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,11 +18,14 @@ import com.example.petkeeper.util.binding.BindingFragment
 import com.google.common.util.concurrent.ListenableFuture
 
 class CamFragment : BindingFragment<FragmentCamBinding>(R.layout.fragment_cam, true) {
+    companion object {
+        val PERMISSION_REQUEST_CODE = 1000
+    }
     private lateinit var cameraProviderFuture : ListenableFuture<ProcessCameraProvider>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        checkPermission()
         cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
         cameraProviderFuture.addListener(Runnable {
@@ -40,5 +45,13 @@ class CamFragment : BindingFragment<FragmentCamBinding>(R.layout.fragment_cam, t
         preview.setSurfaceProvider(binding?.previewView?.surfaceProvider)
 
         var camera = cameraProvider.bindToLifecycle(this as LifecycleOwner, cameraSelector, preview)
+    }
+
+    private fun checkPermission(){
+        if(ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED){
+            println("s")
+        }else {
+            requestPermissions(arrayOf(Manifest.permission.CAMERA), PERMISSION_REQUEST_CODE)
+        }
     }
 }
