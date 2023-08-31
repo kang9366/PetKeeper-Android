@@ -18,7 +18,7 @@ class DetailDialog(context : AppCompatActivity) {
     fun initDialog(year: Int, month: Int, day: DateItem){
         binding.viewPager.adapter = viewPagerAdapter
         binding.indicator.setViewPager(binding.viewPager)
-        binding.titleText.text = "${year}년 ${month}월 ${day.day}일"
+        binding.titleText.text = "${year}년 ${month-1}월 ${day.date}일"
 
         viewPagerAdapter.apply {
             addFragment(DetailInfoDialog())
@@ -34,6 +34,10 @@ class DetailDialog(context : AppCompatActivity) {
         }.show()
 
         binding.closeButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        binding.cancelButton.setOnClickListener {
             dialog.dismiss()
         }
     }

@@ -14,9 +14,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:text="2023년 8월 10일"
             android:textColor="@color/black"
-            android:fontFamily="@font/poppins_extra_bold"
+            android:fontFamily="@font/poppins_bold"
+            android:textStyle="bold"
             android:textSize="20sp"/>
         <Button
             android:id="@+id/close_button"
@@ -44,7 +44,26 @@
             app:ci_height="4dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/viewPager"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@+id/viewPager"/>
+
+        <Button
+            android:id="@+id/confirmButton"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
+            android:text="확인"
+            android:background="@null"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/indicator"/>
+
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
+            android:text="취소"
+            android:background="@null"
+            app:layout_constraintEnd_toStartOf="@+id/confirmButton"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/indicator"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
