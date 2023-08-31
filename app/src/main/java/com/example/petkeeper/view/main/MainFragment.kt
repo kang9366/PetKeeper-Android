@@ -28,6 +28,8 @@ import com.example.petkeeper.util.adapter.DateItem
 import com.example.petkeeper.util.adapter.OnItemClickListener
 import com.example.petkeeper.util.binding.BindingFragment
 import com.example.petkeeper.view.dialog.DetailDialog
+import com.example.petkeeper.view.dialog.VaccinationDialog
+import com.example.petkeeper.view.dialog.WeightDialog
 import com.google.gson.JsonObject
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -69,6 +71,16 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
 
         binding?.fabSub1?.setOnClickListener {
             initCamera()
+        }
+
+        binding?.vaccinationDateText?.setOnClickListener {
+            val dialog = VaccinationDialog(context)
+            dialog.initDialog()
+        }
+
+        binding?.weightText?.setOnClickListener {
+            val dialog = WeightDialog(context)
+            dialog.initDialog()
         }
     }
 
