@@ -6,7 +6,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.dialog.DetailInfoDialog">
+        tools:context=".view.dialog.DetailExaminationDialog">
 
         <TextView
             android:id="@+id/dine"
@@ -18,7 +18,16 @@
             android:textSize="17sp"
             android:fontFamily="@font/poppins_bold"
             android:textColor="@color/black"
-            android:text="시간"/>
+            android:text="예방접종"/>
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dine"
+            android:orientation="vertical"/>
+
         <Button
             android:id="@+id/add_dine"
             android:layout_width="25dp"
@@ -36,8 +45,8 @@
             android:textSize="17sp"
             android:fontFamily="@font/poppins_bold"
             android:textColor="@color/black"
-            android:text="산책 시간"/>
-ㅈ
+            android:text="몸무게"/>
+
         <Button
             android:id="@+id/add_walk"
             android:layout_width="25dp"
