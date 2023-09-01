@@ -21,7 +21,6 @@ import androidx.core.content.ContextCompat
 import com.example.petkeeper.R
 import com.example.petkeeper.util.api.RetrofitBuilder
 import com.example.petkeeper.databinding.FragmentMainBinding
-import com.example.petkeeper.util.App.Companion.calendar
 import com.example.petkeeper.util.App.Companion.preferences
 import com.example.petkeeper.util.adapter.DateAdapter
 import com.example.petkeeper.util.adapter.DateItem
@@ -45,6 +44,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
     private var isFabOpen = false
     private lateinit var context: MainActivity
     private var item = ArrayList<DateItem>()
+    private val calendar = Calendar.getInstance()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
