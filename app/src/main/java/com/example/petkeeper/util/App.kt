@@ -7,7 +7,6 @@ import java.util.Calendar
 class App: Application() {
     companion object {
         lateinit var preferences: PreferenceUtil
-        val calendar: Calendar = Calendar.getInstance()
     }
 
     override fun onCreate() {

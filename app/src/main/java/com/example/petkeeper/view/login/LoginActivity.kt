@@ -41,13 +41,11 @@ import com.kakao.sdk.user.UserApiClient
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.profile.NidProfileCallback
 import com.navercorp.nid.profile.data.NidProfileResponse
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class LoginActivity : BindingActivity<ActivityLoginBinding>(R.layout.activity_login) {
     private var mGoogleSignInClient : GoogleSignInClient? = null
     private lateinit var googleLoginLauncher: ActivityResultLauncher<Intent>
+
     private val callback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             val dialog = FinishDialog(this@LoginActivity)
@@ -68,34 +66,11 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(R.layout.activity_lo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.onBackPressedDispatcher.addCallback(this, callback)
-
-        binding.loginButton.setOnClickListener {
-            binding.load.visibility = View.VISIBLE
-            CoroutineScope(Dispatchers.Main).launch {
-                binding.load.playAnimation()
-                initLogin()
-            }
-        }
-
-        binding.naverLoginButton.setOnClickListener {
-            initnNaverLogin()
-        }
-
-        binding.kakaoLoginButton.setOnClickListener {
-            initKakaoLogin()
-        }
-
-        binding.googleLoginButton.setOnClickListener {
-            initGoogleLogin()
-        }
-
-        binding.signUpButton.setOnClickListener {
-            initSignUpButton()
-        }
+        binding.data = this
     }
 
     //일반 로그인
-    private fun initLogin(){
+    fun initLogin(view: View?){
         val email = binding.editEmail.text.toString()
         val password = binding.editPassword.text.toString()
         val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
@@ -113,6 +88,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(R.layout.activity_lo
                 val message = responseData?.getAsJsonObject("user")
                 val token = responseData?.get("token")
 
+                Log.d("Post Login Data", response.toString())
                 Log.d("Post Login Data", message.toString())
                 Log.d("Post Login Data", responseData.toString())
                 Log.d("Post Login Data", token.toString())
@@ -140,7 +116,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(R.layout.activity_lo
     }
 
     //네이버 로그인
-    private fun initnNaverLogin(){
+    fun initNaverLogin(view: View?){
         NaverIdLoginSDK.initialize(applicationContext,
             resources.getString(R.string.naver_client_id),
             resources.getString(R.string.naver_client_secret),
@@ -193,7 +169,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(R.layout.activity_lo
     }
 
     //카카오 로그인
-    private fun initKakaoLogin(){
+    fun initKakaoLogin(view: View?){
         KakaoSdk.init(this@LoginActivity, getString(R.string.kakao_native_key))
 
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
@@ -231,7 +207,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(R.layout.activity_lo
     }
 
     //구글 로그인
-    private fun initGoogleLogin(){
+    fun initGoogleLogin(view: View?){
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
             .build()
@@ -259,7 +235,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(R.layout.activity_lo
         }
     }
 
-    private fun initSignUpButton(){
+    fun initSignUpButton(view: View?){
         val intent = Intent(this, SignUpActivity::class.java)
         startActivity(intent)
     }

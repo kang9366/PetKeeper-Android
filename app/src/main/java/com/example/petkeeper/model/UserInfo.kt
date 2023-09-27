@@ -1,6 +1,7 @@
 package com.example.petkeeper.model
 
 data class UserInfo(
-    val id: String,
-    val password: String,
+    val USER_EMAIL: String,
+    val USER_PASSWORD: String,
+    val USER_PHONE: String,
 )
