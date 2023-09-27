@@ -236,7 +236,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
     }
 
     private fun postImage(body: MultipartBody.Part){
-        RetrofitBuilder.api.postEyeImage(body).enqueue(object: Callback<JsonObject> {
+        RetrofitBuilder.api.postEyeImage(imageFile = body).enqueue(object: Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                 Log.d("post eye image", response.toString())
             }
