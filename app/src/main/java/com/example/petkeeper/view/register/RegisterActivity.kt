@@ -9,8 +9,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.MotionEvent
-import android.view.inputmethod.InputMethodManager
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -33,15 +32,11 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
+        binding.data = this
 
         val intent = Intent(this@RegisterActivity, MainActivity::class.java)
 
         initGenderButton()
-
-        binding.addButton.setOnClickListener {
-            initAddPhoto()
-        }
 
         binding.registerButton.setOnClickListener {
             checkData(intent)
@@ -87,13 +82,6 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
 //            byteArray = byteArrayOutputStream.toByteArray()
 //            intent.putExtra("image", byteArray)
 //        }
-    }
-
-    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        val imm: InputMethodManager =
-            getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
-        return super.dispatchTouchEvent(ev)
     }
 
     @Deprecated("Deprecated in Java")
@@ -158,7 +146,7 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
         }
     }
 
-    private fun initAddPhoto(){
+    fun initAddPhoto(view: View?){
         //갤러리 접근 권한 설정
         when {
             ContextCompat.checkSelfPermission(
