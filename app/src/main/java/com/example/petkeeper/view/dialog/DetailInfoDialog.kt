@@ -1,60 +1,32 @@
 package com.example.petkeeper.view.dialog
 
+import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.TextView
+import com.akexorcist.snaptimepicker.SnapTimePickerDialog
 import com.example.petkeeper.R
+import com.example.petkeeper.databinding.DetailInfoDialogBinding
+import com.example.petkeeper.util.binding.BindingFragment
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class DetailInfoDialog : BindingFragment<DetailInfoDialogBinding>(R.layout.detail_info_dialog, false) {
+    @SuppressLint("SetTextI18n")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-/**
- * A simple [Fragment] subclass.
- * Use the [DetailInfoDialog.newInstance] factory method to
- * create an instance of this fragment.
- */
-class DetailInfoDialog : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.detail_info_dialog, container, false)
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment DetailInfoDialog.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            DetailInfoDialog().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+        binding?.addDine?.setOnClickListener {
+            val dialog = SnapTimePickerDialog.Builder().apply {
+                setTitle(R.string.dine_dialog_title)
+            }.build().apply {
+                setListener{ hour, minute ->
+                    val textView = TextView(requireContext())
+                    textView.setTextColor(Color.BLACK)
+                    textView.text = "${hour}시 ${minute}분"
+                    binding?.dineText?.addView(textView)
                 }
             }
+            fragmentManager?.let { it1 -> dialog.show(it1, tag) }
+        }
     }
 }
