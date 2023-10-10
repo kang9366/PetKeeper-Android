@@ -5,7 +5,7 @@ import android.view.View
 import android.widget.Toast
 import com.example.petkeeper.R
 import com.example.petkeeper.databinding.ActivitySignUpBinding
-import com.example.petkeeper.model.UserInfo
+import com.example.petkeeper.model.User
 import com.example.petkeeper.util.api.RetrofitBuilder
 import com.example.petkeeper.util.binding.BindingActivity
 import com.google.gson.JsonObject
@@ -33,7 +33,7 @@ class SignUpActivity : BindingActivity<ActivitySignUpBinding>(R.layout.activity_
     }
 
     private fun postData(email: String, password: String, phone: String){
-        RetrofitBuilder.api.postSignUpData(userInfo = UserInfo(email, password, phone)).enqueue(object: Callback<JsonObject>{
+        RetrofitBuilder.api.postSignUpData(user = User(email, password, phone)).enqueue(object: Callback<JsonObject>{
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                 if(response.isSuccessful){
                     if(response.code()==200){

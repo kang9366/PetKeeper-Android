@@ -18,6 +18,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import com.example.petkeeper.R
 import com.example.petkeeper.util.api.RetrofitBuilder
 import com.example.petkeeper.databinding.FragmentMainBinding
@@ -27,6 +28,7 @@ import com.example.petkeeper.util.adapter.DateItem
 import com.example.petkeeper.util.adapter.OnItemClickListener
 import com.example.petkeeper.util.binding.BindingFragment
 import com.example.petkeeper.view.dialog.DetailDialog
+import com.example.petkeeper.view.dialog.TestViewModel
 import com.example.petkeeper.view.dialog.VaccinationDialog
 import com.example.petkeeper.view.dialog.WeightDialog
 import com.google.gson.JsonObject
@@ -41,6 +43,8 @@ import java.io.FileOutputStream
 import java.util.Calendar
 
 class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main, true) {
+    private val viewModel: TestViewModel by activityViewModels()
+
     private var isFabOpen = false
     private lateinit var context: MainActivity
     private var item = ArrayList<DateItem>()
@@ -111,7 +115,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
         val adapter = DateAdapter(item)
         adapter.setOnItemClickListener(object : OnItemClickListener{
             override fun onItemClick(v: View, data: DateItem, pos: Int) {
-                val dialog = DetailDialog(context)
+                val dialog = DetailDialog(context, viewModel)
                 dialog.initDialog(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, data)
             }
         })
