@@ -19,6 +19,10 @@ class PreferenceUtil(context: Context) {
         set(value) = pref.edit().putString("token", value).apply()
 
     inner class Pet {
+        var id: String?
+            get() = pref.getString("id", null)
+            set(value) = pref.edit().putString("id", value).apply()
+
         var gender: String?
             get() = pref.getString("gender", null)
             set(value) = pref.edit().putString("gender", value).apply()

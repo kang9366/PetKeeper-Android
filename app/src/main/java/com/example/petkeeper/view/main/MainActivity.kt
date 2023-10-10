@@ -13,6 +13,11 @@ class MainActivity : BindingActivity<ActivityMainBinding>(R.layout.activity_main
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initNavigationBar()
+
+    }
+
+    private fun getData(){
+
     }
 
     private fun initNavigationBar(){

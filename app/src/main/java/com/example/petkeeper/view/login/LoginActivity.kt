@@ -86,7 +86,8 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(R.layout.activity_lo
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                 val responseData = response.body()
                 val message = responseData?.getAsJsonObject("user")
-                val token = responseData?.get("token")
+                val tokenWithQuotes = responseData?.get("token").toString()
+                val token = tokenWithQuotes.replace("\"", "")
 
                 Log.d("Post Login Data", response.toString())
                 Log.d("Post Login Data", message.toString())

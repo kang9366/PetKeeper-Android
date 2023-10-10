@@ -9,6 +9,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -16,8 +17,14 @@ import androidx.core.content.ContextCompat
 import com.example.petkeeper.R
 import com.example.petkeeper.databinding.ActivityRegisterBinding
 import com.example.petkeeper.util.App
+import com.example.petkeeper.util.api.RetrofitBuilder
 import com.example.petkeeper.util.binding.BindingActivity
 import com.example.petkeeper.view.main.MainActivity
+import com.google.gson.JsonObject
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.util.*
 
@@ -62,26 +69,34 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
             App.preferences.Pet().name = binding.editName.text.toString()
             App.preferences.Pet().weight =  binding.editWeight.text.toString().toInt()
             App.preferences.Pet().age = age
+            lateinit var gender: String
+            if(binding.maleButton.isSelected){
+                gender = "male"
+            }else if(binding.femaleButton.isSelected){
+                gender = "female"
+            }
             if(binding.maleButton.isSelected){ App.preferences.Pet().gender = "male" }
             else{ App.preferences.Pet().gender = "female" }
+            RetrofitBuilder.api.postPetData("Bearer ${App.preferences.token}",
+                binding.editName.text.toString(),
+                binding.breedSelect.text.toString(),
+                gender,
+                binding.birthButton.text.toString()).enqueue(object: Callback<JsonObject>{
+                override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                    if(response.isSuccessful){
+                        App.preferences.Pet().id = JSONObject(response.body().toString()).getInt("USER_ID").toString()
+                    }
+                }
+
+                override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                    TODO("Not yet implemented")
+                }
+            })
             startActivity(intent)
             finish()
         }else{
             Toast.makeText(this, "모든 정보를 입력해주세요", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    private fun initDogData(intent: Intent){
-//        try {
-//            intent.putExtra("image", byteArray)
-//        } catch (e: UninitializedPropertyAccessException) {
-//            val drawable: Drawable = ContextCompat.getDrawable(applicationContext, R.drawable.logo)!!
-//            val bitmap = (drawable as BitmapDrawable).bitmap
-//            val byteArrayOutputStream = ByteArrayOutputStream()
-//            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
-//            byteArray = byteArrayOutputStream.toByteArray()
-//            intent.putExtra("image", byteArray)
-//        }
     }
 
     @Deprecated("Deprecated in Java")
