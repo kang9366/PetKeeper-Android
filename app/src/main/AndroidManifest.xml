@@ -25,6 +25,7 @@
         android:theme="@style/Theme.PetKeeper"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
         <activity
             android:name=".view.splash.SplashActivity"
             android:exported="true">
@@ -80,5 +81,4 @@
                 android:value="" />
         </activity>
     </application>
-
 </manifest>
