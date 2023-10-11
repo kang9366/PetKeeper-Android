@@ -33,7 +33,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title_text"
-            app:layout_constraintBottom_toTopOf="@+id/indicator"
             android:layout_marginTop="20dp" />
 
         <me.relex.circleindicator.CircleIndicator3

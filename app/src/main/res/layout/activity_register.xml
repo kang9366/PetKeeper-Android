@@ -50,7 +50,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="140dp"
             android:layout_marginEnd="117dp"
-            android:background="@drawable/add_button"/>
+            android:background="@drawable/add_button"
+            android:onClick="@{data::initAddPhoto}"/>
 
         <EditText
             android:id="@+id/edit_name"

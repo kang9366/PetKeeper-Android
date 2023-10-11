@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Context.LOCATION_SERVICE
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
@@ -35,10 +36,17 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map, t
         super.onViewCreated(view, savedInstanceState)
 
         if(isLocationPermissionGranted()){
-            startTracking()
+//            startTracking()
         }else{
             requestPermission.launch(ACCESS_FINE_LOCATION)
         }
+
+        binding?.button?.setOnClickListener {
+            startTracking()
+//            stopTracking()
+        }
+
+//        getMapData()
     }
 
     private  val requestPermission = registerForActivityResult(
@@ -58,38 +66,48 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map, t
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+    val locationListener: LocationListener = object: LocationListener{
+        override fun onLocationChanged(p0: Location) {
+            val uLatitude = p0.latitude
+            val uLongitude = p0.longitude
+            Log.d("location data", uLatitude.toString())
+            Log.d("location data", uLongitude.toString())
+        }
+
+        override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+            super.onStatusChanged(provider, status, extras)
+        }
+
+        override fun onProviderEnabled(provider: String) {
+            super.onProviderEnabled(provider)
+        }
+
+        override fun onProviderDisabled(provider: String) {
+            super.onProviderDisabled(provider)
+        }
+    }
+
     // 현재 사용자 위치추적
     @SuppressLint("MissingPermission")
     private fun startTracking() {
-        binding?.mapView?.currentLocationTrackingMode =
-            MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading  //이 부분
-
+//        binding?.mapView?.currentLocationTrackingMode =
+//            MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
         val lm: LocationManager = context.getSystemService(LOCATION_SERVICE) as LocationManager
-        val userNowLocation: Location? = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-        //위도 , 경도
-        val uLatitude = userNowLocation?.latitude
-        val uLongitude = userNowLocation?.longitude
-        Log.d("test", uLatitude.toString())
-        Log.d("test", uLongitude.toString())
-        val uNowPosition = MapPoint.mapPointWithGeoCoord(uLatitude!!, uLongitude!!)
-
-//        // 현 위치에 마커 찍기
-//        val marker = MapPOIItem()
-//        marker.itemName = "현 위치"
-//        marker.mapPoint =uNowPosition
-//        marker.markerType = MapPOIItem.MarkerType.CustomImage
-//
-//        marker.selectedMarkerType = MapPOIItem.MarkerType.RedPin
-//        binding.mapView.addPOIItem(marker)
+        lm.requestLocationUpdates(
+            LocationManager.NETWORK_PROVIDER,
+            2 * 60 * 1000,
+            10f,
+            locationListener
+        )
     }
 
     // 위치추적 중지
-    private fun stopTracking() {
-        binding?.mapView?.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOff
-    }
+//    private fun stopTracking() {
+//        binding?.mapView?.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOff
+//    }
 
     override fun onDestroy() {
         super.onDestroy()
-        stopTracking()
+//        stopTracking()
     }
 }

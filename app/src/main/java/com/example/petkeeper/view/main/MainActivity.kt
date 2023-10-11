@@ -14,6 +14,11 @@ class MainActivity : BindingActivity<ActivityMainBinding>(R.layout.activity_main
         preferences.isLogin = true
         setContentView(binding.root)
         initNavigationBar()
+
+    }
+
+    private fun getData(){
+
     }
 
     private fun initNavigationBar(){
