@@ -18,16 +18,17 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import com.example.petkeeper.R
 import com.example.petkeeper.util.api.RetrofitBuilder
 import com.example.petkeeper.databinding.FragmentMainBinding
-import com.example.petkeeper.util.App.Companion.calendar
 import com.example.petkeeper.util.App.Companion.preferences
 import com.example.petkeeper.util.adapter.DateAdapter
 import com.example.petkeeper.util.adapter.DateItem
 import com.example.petkeeper.util.adapter.OnItemClickListener
 import com.example.petkeeper.util.binding.BindingFragment
 import com.example.petkeeper.view.dialog.DetailDialog
+import com.example.petkeeper.view.dialog.TestViewModel
 import com.example.petkeeper.view.dialog.VaccinationDialog
 import com.example.petkeeper.view.dialog.WeightDialog
 import com.google.gson.JsonObject
@@ -42,9 +43,12 @@ import java.io.FileOutputStream
 import java.util.Calendar
 
 class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main, true) {
+    private val viewModel: TestViewModel by activityViewModels()
+
     private var isFabOpen = false
     private lateinit var context: MainActivity
     private var item = ArrayList<DateItem>()
+    private val calendar = Calendar.getInstance()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -57,6 +61,8 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
 
         initInformation()
         initRecyclerView()
+        getUserData()
+
 
         binding?.fabMain?.apply {
             bringToFront()
@@ -82,6 +88,19 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
             val dialog = WeightDialog(context)
             dialog.initDialog()
         }
+    }
+
+    private fun getUserData(){
+        RetrofitBuilder.api.getUserInfo(userId=preferences.userId.toString()).enqueue(object : Callback<JsonObject>{
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                Log.d("get user data", response.toString())
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+
+        })
     }
 
     @SuppressLint("SetTextI18n")
@@ -111,7 +130,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
         val adapter = DateAdapter(item)
         adapter.setOnItemClickListener(object : OnItemClickListener{
             override fun onItemClick(v: View, data: DateItem, pos: Int) {
-                val dialog = DetailDialog(context)
+                val dialog = DetailDialog(context, viewModel)
                 dialog.initDialog(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, data)
             }
         })
@@ -236,7 +255,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
     }
 
     private fun postImage(body: MultipartBody.Part){
-        RetrofitBuilder.api.postEyeImage(body).enqueue(object: Callback<JsonObject> {
+        RetrofitBuilder.api.postEyeImage(image = body).enqueue(object: Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                 Log.d("post eye image", response.toString())
             }
