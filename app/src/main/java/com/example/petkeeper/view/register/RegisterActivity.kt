@@ -10,15 +10,15 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import com.example.petkeeper.R
 import com.example.petkeeper.databinding.ActivityRegisterBinding
 import com.example.petkeeper.util.App
 import com.example.petkeeper.util.api.RetrofitBuilder
 import com.example.petkeeper.util.binding.BindingActivity
+import com.example.petkeeper.view.dialog.BirthPickerDialog
+import com.example.petkeeper.view.dialog.PostDialogData
 import com.example.petkeeper.view.main.MainActivity
 import com.google.gson.JsonObject
 import org.json.JSONObject
@@ -28,7 +28,7 @@ import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.util.*
 
-class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activity_register) {
+class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activity_register), PostDialogData {
     private lateinit var byteArray: ByteArray
     private var age: Int = 0
 
@@ -46,11 +46,11 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
         initGenderButton()
 
         binding.registerButton.setOnClickListener {
-            checkData(intent)
+            initRegister(intent)
         }
 
         binding.birthButton.setOnClickListener {
-            initBirth()
+            test()
         }
 
         binding.breedSelect.setOnClickListener {
@@ -58,45 +58,53 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
         }
     }
 
-    private fun checkData(intent: Intent){
-        val flag =  binding.editName.text.isNotEmpty() &&
-                    binding.editWeight.text.isNotEmpty() &&
-                    (binding.maleButton.isSelected || binding.femaleButton.isSelected) &&
-                    binding.breedSelect.isSelected &&
-                    binding.birthButton.isSelected
-        if(flag){
-            App.preferences.isRegistered = true
+    private fun checkData(): Boolean =
+                binding.editName.text.isNotEmpty() &&
+                binding.editWeight.text.isNotEmpty() &&
+                (binding.maleButton.isSelected || binding.femaleButton.isSelected) &&
+                binding.breedSelect.isSelected &&
+                binding.birthButton.isSelected
+
+    private fun initRegister(intent: Intent){
+        if(checkData()){
             App.preferences.Pet().name = binding.editName.text.toString()
             App.preferences.Pet().weight =  binding.editWeight.text.toString().toInt()
             App.preferences.Pet().age = age
+            if(binding.maleButton.isSelected){ App.preferences.Pet().gender = "male" }
+            else{ App.preferences.Pet().gender = "female" }
             lateinit var gender: String
             if(binding.maleButton.isSelected){
                 gender = "male"
             }else if(binding.femaleButton.isSelected){
                 gender = "female"
             }
+
             if(binding.maleButton.isSelected){ App.preferences.Pet().gender = "male" }
             else{ App.preferences.Pet().gender = "female" }
-            RetrofitBuilder.api.postPetData("Bearer ${App.preferences.token}",
-                binding.editName.text.toString(),
-                binding.breedSelect.text.toString(),
-                gender,
-                binding.birthButton.text.toString()).enqueue(object: Callback<JsonObject>{
-                override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                    if(response.isSuccessful){
-                        App.preferences.Pet().id = JSONObject(response.body().toString()).getInt("USER_ID").toString()
-                    }
-                }
-
-                override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                    TODO("Not yet implemented")
-                }
-            })
+            postPetData(gender)
             startActivity(intent)
             finish()
         }else{
             Toast.makeText(this, "모든 정보를 입력해주세요", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun postPetData(gender: String){
+        RetrofitBuilder.api.postPetData("Bearer ${App.preferences.token}",
+            binding.editName.text.toString(),
+            binding.breedSelect.text.toString(),
+            gender,
+            binding.birthButton.text.toString()).enqueue(object: Callback<JsonObject>{
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                if(response.isSuccessful){
+                    App.preferences.Pet().id = JSONObject(response.body().toString()).getInt("USER_ID").toString()
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+        })
     }
 
     @Deprecated("Deprecated in Java")
@@ -125,60 +133,9 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
         }
     }
 
-    private fun showPermissionContextPopup() {
-        AlertDialog.Builder(this)
-            .setTitle("권한이 필요합니다.")
-            .setMessage("사진을 등록하기 위해서 권한이 필요합니다.")
-            .setPositiveButton("동의하기") { _, _ ->
-                requestPermissions(arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE), 1000)
-            }
-            .setNegativeButton("취소하기") { _, _ -> }
-            .create()
-            .show()
-    }
-
-    private fun navigatePhoto(){
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        startActivityForResult(intent, 2000)
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            1000 -> {
-                if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    navigatePhoto()
-                }else {
-                    Toast.makeText(this, "권한을 거부하였습니다.", Toast.LENGTH_SHORT).show()
-                }
-            }
-            else -> { }
-        }
-    }
-
-    fun initAddPhoto(view: View?){
-        //갤러리 접근 권한 설정
-        when {
-            ContextCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                //권한이 부여되었을 때 갤러리에서 사진 선택
-                navigatePhoto()
-            }
-            shouldShowRequestPermissionRationale(android.Manifest.permission.READ_EXTERNAL_STORAGE) -> {
-                showPermissionContextPopup()
-            }
-            else -> {
-                requestPermissions(arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE), 1000)
-            }
-        }
-    }
+//    fun initAddPhoto(view: View?){
+//        pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+//    }
 
     private fun initSpinner() {
         val builder = AlertDialog.Builder(this)
@@ -192,6 +149,11 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
             create()
             show()
         }
+    }
+
+    private fun test(){
+        val dialog = BirthPickerDialog(this)
+        dialog.initDialog()
     }
 
     private fun initBirth(){
@@ -237,5 +199,9 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
             binding.femaleButton.isSelected = true
             binding.maleButton.isSelected = false
         }
+    }
+
+    override fun postData(data: String) {
+        Log.d("Testt", data)
     }
 }

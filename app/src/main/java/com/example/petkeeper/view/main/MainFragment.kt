@@ -61,6 +61,8 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
 
         initInformation()
         initRecyclerView()
+        getUserData()
+
 
         binding?.fabMain?.apply {
             bringToFront()
@@ -86,6 +88,19 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
             val dialog = WeightDialog(context)
             dialog.initDialog()
         }
+    }
+
+    private fun getUserData(){
+        RetrofitBuilder.api.getUserInfo(userId=preferences.userId.toString()).enqueue(object : Callback<JsonObject>{
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                Log.d("get user data", response.toString())
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+
+        })
     }
 
     @SuppressLint("SetTextI18n")
@@ -240,7 +255,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
     }
 
     private fun postImage(body: MultipartBody.Part){
-        RetrofitBuilder.api.postEyeImage(imageFile = body).enqueue(object: Callback<JsonObject> {
+        RetrofitBuilder.api.postEyeImage(image = body).enqueue(object: Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                 Log.d("post eye image", response.toString())
             }

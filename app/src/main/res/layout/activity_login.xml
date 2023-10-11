@@ -2,7 +2,7 @@
 <layout>
     <data>
         <variable
-            name="data"
+            name="login"
             type="com.example.petkeeper.view.login.LoginActivity" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -130,7 +130,7 @@
             android:layout_marginBottom="5dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
-            android:onClick="@{data::initLogin}"/>
+            android:onClick="@{login::initLogin}"/>
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/load"
@@ -195,7 +195,7 @@
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
             android:layout_marginBottom="13dp"
-            android:onClick="@{data::initNaverLogin}"/>
+            android:onClick="@{login.initNaverLogin}"/>
 
         <Button
             android:id="@+id/kakaoLoginButton"
@@ -214,7 +214,7 @@
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
             android:layout_marginBottom="13dp"
-            android:onClick="initKakaoLogin"/>
+            android:onClick="@{login.initKakaoLogin}"/>
 
         <Button
             android:id="@+id/googleLoginButton"
@@ -233,6 +233,6 @@
             android:layout_marginEnd="30dp"
             android:drawableStart="@drawable/google"
             android:background="@drawable/round_button"
-            android:onClick="initGoogleLogin"/>
+            android:onClick="initGoogleLogin" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

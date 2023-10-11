@@ -1,12 +1,11 @@
 package com.example.petkeeper.view.dialog
 
 import android.os.Bundle
-import android.util.Log
+
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.example.petkeeper.R
 import com.example.petkeeper.databinding.DetailExaminationDialogBinding

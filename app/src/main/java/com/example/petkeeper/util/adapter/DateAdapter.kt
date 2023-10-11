@@ -22,6 +22,10 @@ class DateAdapter(private val items: ArrayList<DateItem>): RecyclerView.Adapter<
         return position
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
     override fun getItemCount(): Int {
         return items.size
     }

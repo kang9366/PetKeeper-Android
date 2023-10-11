@@ -6,9 +6,6 @@ import android.util.Log
 import android.view.ViewGroup
 import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.petkeeper.databinding.DetailDialogBinding
 import com.example.petkeeper.util.App
 import com.example.petkeeper.util.adapter.DateItem
@@ -49,7 +46,8 @@ class DetailDialog(context : AppCompatActivity, private val viewModel: TestViewM
 
         binding.confirmButton.setOnClickListener {
             Log.d("testtt", App.preferences.Pet().id.toString())
-            RetrofitBuilder.api.postWeight(PET_WEIGHT=viewModel.weight.value.toString(), PET_WEIGHT_DATE = binding.titleText.text.toString()).enqueue(object : Callback<JsonObject>{
+            RetrofitBuilder.api.postWeight(PET_WEIGHT=viewModel.weight.value.toString(), PET_WEIGHT_DATE = binding.titleText.text.toString()).enqueue(object :
+                Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     if(response.isSuccessful){
                         Log.d("testtt", response.body().toString())

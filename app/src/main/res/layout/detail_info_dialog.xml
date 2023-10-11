@@ -19,6 +19,7 @@
             android:fontFamily="@font/poppins_bold"
             android:textColor="@color/black"
             android:text="식사 시간"/>
+
         <LinearLayout
             android:id="@+id/dine_text"
             android:layout_width="match_parent"
@@ -34,6 +35,7 @@
             android:background="@drawable/add_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dine_text"/>
+
         <TextView
             android:id="@+id/walk"
             android:layout_width="wrap_content"

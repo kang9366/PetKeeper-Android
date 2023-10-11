@@ -1,13 +1,9 @@
 package com.example.petkeeper.view.login
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
@@ -15,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.example.petkeeper.view.main.MainActivity
 import com.example.petkeeper.R
 import com.example.petkeeper.databinding.ActivityLoginBinding
+import com.example.petkeeper.model.LoginResponse
 import com.example.petkeeper.util.App.Companion.preferences
 import com.example.petkeeper.util.api.RetrofitBuilder
 import com.example.petkeeper.util.binding.BindingActivity
@@ -27,7 +24,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
-import com.google.gson.JsonObject
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.model.ClientError
@@ -41,6 +37,9 @@ import com.kakao.sdk.user.UserApiClient
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.profile.NidProfileCallback
 import com.navercorp.nid.profile.data.NidProfileResponse
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class LoginActivity : BindingActivity<ActivityLoginBinding>(R.layout.activity_login) {
     private var mGoogleSignInClient : GoogleSignInClient? = null
@@ -66,54 +65,49 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(R.layout.activity_lo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.onBackPressedDispatcher.addCallback(this, callback)
-        binding.data = this
+
+        binding.login = this
     }
 
     //일반 로그인
-    fun initLogin(view: View?){
+    fun initLogin(view: View){
         val email = binding.editEmail.text.toString()
         val password = binding.editPassword.text.toString()
-        val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
         if(email == "" || password == ""){
             Toast.makeText(this@LoginActivity, "아이디와 비밀번호를 모두 입력해주세요", Toast.LENGTH_SHORT).show()
         }else{
-            postLoginData(email, password, intent)
+            binding.load.visibility = View.VISIBLE
+            CoroutineScope(Dispatchers.Main).launch {
+                binding.load.playAnimation()
+                postLoginData(email, password)
+            }
         }
     }
 
-    private fun postLoginData(email: String, password: String, intent: Intent){
-        RetrofitBuilder.api.postLoginData(email, password).enqueue(object: Callback<JsonObject>{
-            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                val responseData = response.body()
-                val message = responseData?.getAsJsonObject("user")
-                val tokenWithQuotes = responseData?.get("token").toString()
-                val token = tokenWithQuotes.replace("\"", "")
+    private fun postLoginData(email: String, password: String){
+        RetrofitBuilder.api.postLoginData(email, password).enqueue(object: Callback<LoginResponse>{
+            override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                val responseData = response.body()!!
 
-                Log.d("Post Login Data", response.toString())
-                Log.d("Post Login Data", message.toString())
-                Log.d("Post Login Data", responseData.toString())
-                Log.d("Post Login Data", token.toString())
-
-                if(response.raw().code==200 || response.raw().code==502){
-                    preferences.token = token.toString()
-                    preferences.isLogin = true
+                if(response.raw().code==200){
+                    preferences.token = responseData.token
+                    preferences.userId = responseData.USER.USER_ID
+                    intent =
+                        if(responseData.USER.p_pets.isEmpty()){
+                            Intent(this@LoginActivity, RegisterActivity::class.java)
+                        }else{
+                            Intent(this@LoginActivity, MainActivity::class.java)
+                        }
                     startActivity(intent)
                     finish()
-                }else if(response.raw().code==403){
+                }else{
                     Toast.makeText(this@LoginActivity, "로그인 실패", Toast.LENGTH_SHORT).show()
                 }
             }
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+            override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 Log.d("Post Login Data", "Login fail")
             }
         })
-    }
-
-    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        val imm: InputMethodManager =
-            getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
-        return super.dispatchTouchEvent(ev)
     }
 
     //네이버 로그인

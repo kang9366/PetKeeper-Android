@@ -32,10 +32,8 @@ class SplashActivity : AppCompatActivity() {
         this.onBackPressedDispatcher.addCallback(this, callback)
 
         Handler(Looper.getMainLooper()).postDelayed({
-            if(App.preferences.isLogin && App.preferences.isRegistered){
+            if(App.preferences.isLogin){
                 initActivity(MainActivity())
-            }else if(App.preferences.isLogin && !App.preferences.isRegistered){
-                initActivity(RegisterActivity())
             }else{
                 initActivity(LoginActivity())
             }
