@@ -10,15 +10,19 @@ class PreferenceUtil(context: Context) {
         get() = pref.getBoolean("isLogin", false)
         set(value) = pref.edit().putBoolean("isLogin", value).apply()
 
-    var isRegistered: Boolean
-        get() = pref.getBoolean("isRegistered", false)
-        set(value) = pref.edit().putBoolean("isRegistered", value).apply()
-
     var token: String?
         get() = pref.getString("token", null)
         set(value) = pref.edit().putString("token", value).apply()
 
+    var userId: Int
+        get() = pref.getInt("userId", -1)
+        set(value) = pref.edit().putInt("userId", value).apply()
+
     inner class Pet {
+        var id: String?
+            get() = pref.getString("id", null)
+            set(value) = pref.edit().putString("id", value).apply()
+
         var gender: String?
             get() = pref.getString("gender", null)
             set(value) = pref.edit().putString("gender", value).apply()
