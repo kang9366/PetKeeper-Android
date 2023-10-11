@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.register.RegisterActivity">
+    <data>
+        <variable
+            name="data"
+            type="com.example.petkeeper.view.register.RegisterActivity" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".view.register.RegisterActivity">
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/titleText"
@@ -48,9 +54,11 @@
 
         <EditText
             android:id="@+id/edit_name"
-            android:layout_width="350dp"
+            android:layout_width="0dp"
             android:layout_height="45dp"
             android:layout_marginTop="30dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:background="@drawable/edittext_bg"
             android:fontFamily="@font/poppins_regular"
             android:hint="Name"
@@ -66,9 +74,11 @@
 
         <EditText
             android:id="@+id/edit_weight"
-            android:layout_width="350dp"
+            android:layout_width="0dp"
             android:layout_height="45dp"
             android:layout_marginTop="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:background="@drawable/edittext_bg"
             android:fontFamily="@font/poppins_regular"
             android:hint="Weight"
@@ -84,12 +94,14 @@
 
         <TextView
             android:id="@+id/breed_select"
-            android:layout_width="350dp"
+            android:layout_width="0dp"
             android:layout_height="45dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edit_weight"
             android:layout_marginTop="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:text="품종을 선택해주세요"
             android:gravity="center_vertical"
             android:paddingStart="10dp"
@@ -101,9 +113,11 @@
 
         <TextView
             android:id="@+id/birthButton"
-            android:layout_width="350dp"
+            android:layout_width="0dp"
             android:layout_height="45dp"
             android:layout_marginTop="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:background="@drawable/spinner_bg"
             android:fontFamily="@font/poppins_regular"
             android:gravity="center_vertical"
@@ -143,12 +157,14 @@
 
         <Button
             android:id="@+id/registerButton"
-            android:layout_width="350dp"
+            android:layout_width="0dp"
             android:layout_height="45dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="25dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:fontFamily="@font/poppins_bold"
             android:textColor="#FFFFFF"
             android:text="REGISTER"
