@@ -2,10 +2,10 @@ package com.example.petkeeper.model
 
 data class LoginResponse(
     val token: String,
-    val USER: UserTest
+    val USER: UserResponse
 )
 
-data class UserTest(
+data class UserResponse(
     val USER_ID: Int,
     val USER_OAUTH_ID: Any?,
     val USER_EMAIL: String,
