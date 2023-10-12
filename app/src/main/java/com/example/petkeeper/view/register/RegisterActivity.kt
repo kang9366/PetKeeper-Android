@@ -1,5 +1,6 @@
 package com.example.petkeeper.view.register
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
@@ -10,14 +11,21 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import com.example.petkeeper.R
 import com.example.petkeeper.databinding.ActivityRegisterBinding
 import com.example.petkeeper.util.App
 import com.example.petkeeper.util.api.RetrofitBuilder
 import com.example.petkeeper.util.binding.BindingActivity
 import com.example.petkeeper.view.dialog.BirthPickerDialog
+import com.example.petkeeper.view.dialog.PostDialog
 import com.example.petkeeper.view.dialog.PostDialogData
 import com.example.petkeeper.view.main.MainActivity
 import com.google.gson.JsonObject
@@ -31,6 +39,9 @@ import java.util.*
 class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activity_register), PostDialogData {
     private lateinit var byteArray: ByteArray
     private var age: Int = 0
+    private lateinit var dialog: PostDialog
+    private lateinit var pickMedia: ActivityResultLauncher<PickVisualMediaRequest>
+    private val viewModel: RegisterViewModel by viewModels()
 
     @SuppressLint("SimpleDateFormat")
     override fun onStart() {
@@ -41,21 +52,96 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
         super.onCreate(savedInstanceState)
         binding.data = this
 
-        val intent = Intent(this@RegisterActivity, MainActivity::class.java)
-
+        initPickMedia()
         initGenderButton()
+        setImage()
+    }
 
-        binding.registerButton.setOnClickListener {
-            initRegister(intent)
+    // 사진 선택 dialog
+    fun initAddPhoto(view: View?){
+        dialog = PostDialog(this)
+        dialog.initDialog(pickMedia, cameraCallback)
+    }
+
+    // 이미지 설정
+    private fun setImage(){
+        viewModel.uri.observe(this) {
+            binding.dogImage.setImageURI(it)
+        }
+    }
+
+    // 갤러리 접근
+    private fun initPickMedia(){
+        pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {
+            if(it != null) {
+                dialog.closeDialog()
+                viewModel.setUri(it)
+            }else {
+                Log.d("test", "사진 선택 안됨")
+            }
+        }
+    }
+
+    // 카메라 접근
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode != Activity.RESULT_OK){
+            return
         }
 
-        binding.birthButton.setOnClickListener {
-            test()
+        when(requestCode) {
+            1000 -> {
+                val selectedImageUri: Uri? = data?.data
+                if(selectedImageUri != null){
+                    binding.dogImage.setImageURI(selectedImageUri)
+                    val image = MediaStore.Images.Media.getBitmap(contentResolver, selectedImageUri)
+                    val stream = ByteArrayOutputStream()
+                    image.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                    byteArray = stream.toByteArray()
+                }else{
+                    Toast.makeText(this, "사진을 가져오지 못했습니다", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
+    }
 
-        binding.breedSelect.setOnClickListener {
-            initSpinner()
+    private fun initCamera() {
+        when {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                runCamera()
+            }
+            shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) -> {
+                showPermissionContextPopup(Manifest.permission.CAMERA)
+            }
+            else -> {
+                requestPermissions(arrayOf(Manifest.permission.CAMERA), 1000)
+            }
         }
+    }
+
+    private fun runCamera(){
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivityForResult(intent, 3000)
+    }
+
+    private fun showPermissionContextPopup(permission: String) {
+        AlertDialog.Builder(this)
+            .setTitle("권한이 필요합니다.")
+            .setMessage("사진을 등록하기 위해서 권한이 필요합니다.")
+            .setPositiveButton("동의하기") { _, _ ->
+                requestPermissions(arrayOf(permission), 1000)
+            }
+            .setNegativeButton("취소하기") { _, _ -> }
+            .create()
+            .show()
+    }
+
+    private val cameraCallback: () -> Unit = {
+        initCamera()
     }
 
     private fun checkData(): Boolean =
@@ -65,7 +151,9 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
                 binding.breedSelect.isSelected &&
                 binding.birthButton.isSelected
 
-    private fun initRegister(intent: Intent){
+    fun initRegister(view: View){
+        val intent = Intent(this@RegisterActivity, MainActivity::class.java)
+
         if(checkData()){
             App.preferences.Pet().name = binding.editName.text.toString()
             App.preferences.Pet().weight =  binding.editWeight.text.toString().toInt()
@@ -107,37 +195,8 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
         })
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if(resultCode != Activity.RESULT_OK){
-            return
-        }
-
-        when(requestCode) {
-            2000 -> {
-                val selectedImageUri: Uri? = data?.data
-                if(selectedImageUri != null){
-                    binding.dogImage.setImageURI(selectedImageUri)
-                    val image = MediaStore.Images.Media.getBitmap(contentResolver, selectedImageUri)
-                    val stream = ByteArrayOutputStream()
-                    image.compress(Bitmap.CompressFormat.PNG, 100, stream)
-                    byteArray = stream.toByteArray()
-                }else{
-                    Toast.makeText(this, "사진을 가져오지 못했습니다", Toast.LENGTH_SHORT).show()
-                }
-            }
-            else -> {
-                Toast.makeText(this, "사진을 가져오지 못했습니다", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-//    fun initAddPhoto(view: View?){
-//        pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-//    }
-
-    private fun initSpinner() {
+    // 품종 선택 dialog
+    fun initSpinner(view: View) {
         val builder = AlertDialog.Builder(this)
         builder.apply {
             setItems(R.array.category_array){
@@ -151,7 +210,9 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
         }
     }
 
-    private fun test(){
+
+    // 생년월일 선택 dialog
+    fun test(view: View){
         val dialog = BirthPickerDialog(this)
         dialog.initDialog()
     }

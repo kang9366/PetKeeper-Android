@@ -22,6 +22,7 @@ import androidx.fragment.app.activityViewModels
 import com.example.petkeeper.R
 import com.example.petkeeper.util.api.RetrofitBuilder
 import com.example.petkeeper.databinding.FragmentMainBinding
+import com.example.petkeeper.model.UserResponse
 import com.example.petkeeper.util.App.Companion.preferences
 import com.example.petkeeper.util.adapter.DateAdapter
 import com.example.petkeeper.util.adapter.DateItem
@@ -91,12 +92,20 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
     }
 
     private fun getUserData(){
-        RetrofitBuilder.api.getUserInfo(userId=preferences.userId.toString()).enqueue(object : Callback<JsonObject>{
-            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                Log.d("get user data", response.toString())
+        RetrofitBuilder.api.getUserInfo(userId=preferences.userId.toString()).enqueue(object : Callback<UserResponse>{
+            override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
+                val responseData = response.body()!!.p_pets[0]
+                binding?.nameText?.text = responseData.PET_NAME
+                binding?.ageText?.text = responseData.PET_BIRTHDATE
+                binding?.breedText?.text = responseData.PET_KIND
+                if(responseData.PET_GENDER == "male"){
+                    binding?.genderImage?.setImageResource(R.drawable.male_icon)
+                }else{
+                    binding?.genderImage?.setImageResource(R.drawable.female_icon)
+                }
             }
 
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
                 TODO("Not yet implemented")
             }
 
@@ -105,15 +114,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
 
     @SuppressLint("SetTextI18n")
     private fun initInformation(){
-        binding?.nameText?.text = preferences.Pet().name
         binding?.weightText?.text = "${preferences.Pet().weight}kg"
-        binding?.ageText?.text = "${preferences.Pet().age}살"
-        binding?.breedText?.text = preferences.Pet().breed
-        if(preferences.Pet().gender == "male"){
-            binding?.genderImage?.setImageResource(R.drawable.male_icon)
-        }else{
-            binding?.genderImage?.setImageResource(R.drawable.female_icon)
-        }
         binding?.yearMonthText?.text = "${calendar.get(Calendar.YEAR)}년 ${calendar.get(Calendar.MONTH)+1}월"
     }
 

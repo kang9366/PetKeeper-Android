@@ -2,6 +2,7 @@ package com.example.petkeeper.util.api
 
 import com.example.petkeeper.model.LoginResponse
 import com.example.petkeeper.model.User
+import com.example.petkeeper.model.UserResponse
 import com.example.petkeeper.util.App
 import com.google.gson.JsonObject
 import okhttp3.MultipartBody
@@ -11,9 +12,9 @@ import retrofit2.http.*
 interface RetrofitService{
     @GET("/user/{userId}")
     fun getUserInfo(
-        @Header("Authorization") token: String? = App.preferences.token,
+        @Header("Authorization") token: String? = "Bearer ${App.preferences.token}",
         @Path("userId") userId: String
-    ): Call<JsonObject>
+    ): Call<UserResponse>
 
     //로그인 Todo-SharedPreference token, USER 저장하기 && USER.p_pets의 length가 0이면 강아지 정보등록 페이지로 이동, 1이상이면 메인페이지로
     @POST("/user/login")
