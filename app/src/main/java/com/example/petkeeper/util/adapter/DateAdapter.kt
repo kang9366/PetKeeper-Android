@@ -18,9 +18,6 @@ interface OnItemClickListener{
 
 class DateAdapter(private val items: ArrayList<DateItem>): RecyclerView.Adapter<DateAdapter.ViewHolder>() {
     private var listener : OnItemClickListener? = null
-    override fun getItemViewType(position: Int): Int {
-        return position
-    }
 
     override fun getItemViewType(position: Int): Int {
         return position
