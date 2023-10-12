@@ -51,8 +51,7 @@
             android:layout_marginTop="140dp"
             android:layout_marginEnd="117dp"
             android:background="@drawable/add_button"
-            android:onClick="@{data::initAddPhoto}"/>
-
+            android:onClick="@{data.initAddPhoto}"/>
         <EditText
             android:id="@+id/edit_name"
             android:layout_width="0dp"
@@ -110,7 +109,8 @@
             android:textSize="15sp"
             android:textColor="@color/black"
             android:background="@drawable/spinner_bg"
-            android:fontFamily="@font/poppins_regular" />
+            android:fontFamily="@font/poppins_regular"
+            android:onClick="@{data.initSpinner}"/>
 
         <TextView
             android:id="@+id/birthButton"
@@ -130,7 +130,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.508"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/breed_select" />
+            app:layout_constraintTop_toBottomOf="@id/breed_select"
+            android:onClick="@{data.test}"/>
 
         <ImageButton
             android:id="@+id/female_button"
@@ -170,6 +171,7 @@
             android:textColor="#FFFFFF"
             android:text="REGISTER"
             android:background="@drawable/round_button"
-            android:backgroundTint="#F2796B"/>
+            android:backgroundTint="#F2796B"
+            android:onClick="@{data.initRegister}"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
