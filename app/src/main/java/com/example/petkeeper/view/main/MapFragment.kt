@@ -16,9 +16,16 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.example.petkeeper.R
 import com.example.petkeeper.databinding.FragmentMapBinding
+import com.example.petkeeper.model.HospitalInfo
+import com.example.petkeeper.model.HospitalResponse
+import com.example.petkeeper.util.api.RetrofitBuilder
 import com.example.petkeeper.util.binding.BindingFragment
+import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map, true) {
     private lateinit var context: Context
@@ -36,17 +43,14 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map, t
         super.onViewCreated(view, savedInstanceState)
 
         if(isLocationPermissionGranted()){
-//            startTracking()
+            startTracking()
         }else{
             requestPermission.launch(ACCESS_FINE_LOCATION)
         }
 
         binding?.button?.setOnClickListener {
             startTracking()
-//            stopTracking()
         }
-
-//        getMapData()
     }
 
     private  val requestPermission = registerForActivityResult(
@@ -66,48 +70,66 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map, t
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    val locationListener: LocationListener = object: LocationListener{
+    private fun getHospitalData(x: String, y: String) {
+        RetrofitBuilder.api.getHospital(x, y).enqueue(object: Callback<HospitalResponse> {
+            override fun onResponse(call: Call<HospitalResponse>, response: Response<HospitalResponse>) {
+                Log.d("testtt loca", response.toString())
+                for(i in response.body()!!.data){
+                    initMarker(i)
+                }
+            }
+
+            override fun onFailure(call: Call<HospitalResponse>, t: Throwable) {
+                Log.d("testtt loca", t.message.toString())
+            }
+        })
+    }
+
+    private fun initMarker(data: HospitalInfo) {
+        val marker = MapPOIItem()
+        val location = MapPoint.mapPointWithGeoCoord(data.HOSPITAL_X, data.HOSPITAL_Y)
+        marker.itemName = data.HOSPITAL_NAME + '\n' + data.HOSPITAL_ADDRESS
+        marker.mapPoint = location
+        marker.markerType = MapPOIItem.MarkerType.BluePin
+        marker.selectedMarkerType = MapPOIItem.MarkerType.RedPin
+        binding?.mapView?.addPOIItem(marker)
+    }
+
+    private val locationListener: LocationListener = object: LocationListener{
         override fun onLocationChanged(p0: Location) {
             val uLatitude = p0.latitude
             val uLongitude = p0.longitude
             Log.d("location data", uLatitude.toString())
             Log.d("location data", uLongitude.toString())
+            getHospitalData(uLatitude.toString(), uLongitude.toString())
         }
 
         override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
             super.onStatusChanged(provider, status, extras)
-        }
-
-        override fun onProviderEnabled(provider: String) {
-            super.onProviderEnabled(provider)
-        }
-
-        override fun onProviderDisabled(provider: String) {
-            super.onProviderDisabled(provider)
         }
     }
 
     // 현재 사용자 위치추적
     @SuppressLint("MissingPermission")
     private fun startTracking() {
-//        binding?.mapView?.currentLocationTrackingMode =
-//            MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
+        binding?.mapView?.currentLocationTrackingMode =
+            MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
         val lm: LocationManager = context.getSystemService(LOCATION_SERVICE) as LocationManager
-        lm.requestLocationUpdates(
+
+        lm.requestSingleUpdate(
             LocationManager.NETWORK_PROVIDER,
-            2 * 60 * 1000,
-            10f,
-            locationListener
+            locationListener,
+            null
         )
     }
 
     // 위치추적 중지
-//    private fun stopTracking() {
-//        binding?.mapView?.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOff
-//    }
+    private fun stopTracking() {
+        binding?.mapView?.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOff
+    }
 
     override fun onDestroy() {
         super.onDestroy()
-//        stopTracking()
+        stopTracking()
     }
 }
