@@ -16,6 +16,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
@@ -32,13 +33,16 @@ import com.example.petkeeper.view.dialog.DetailDialog
 import com.example.petkeeper.view.dialog.TestViewModel
 import com.example.petkeeper.view.dialog.VaccinationDialog
 import com.example.petkeeper.view.dialog.WeightDialog
+import com.google.android.gms.common.wrappers.Wrappers
 import com.google.gson.JsonObject
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Calendar
@@ -72,12 +76,8 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
             }
         }
 
-        binding?.dogImage?.setOnClickListener {
-            initAddPhoto()
-        }
-
         binding?.fabSub1?.setOnClickListener {
-            initCamera()
+            requestCameraPermission()
         }
 
         binding?.vaccinationDateText?.setOnClickListener {
@@ -151,109 +151,54 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
         isFabOpen = !isFabOpen
     }
 
+    private fun bitmapToMultipart(bitmap: Bitmap, fileName: String): MultipartBody.Part {
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream)
+        val byteArray = byteArrayOutputStream.toByteArray()
+
+        val requestBody = byteArray.toRequestBody("image/jpeg".toMediaTypeOrNull(), 0, byteArray.size)
+        return MultipartBody.Part.createFormData("image", fileName, requestBody)
+    }
+
+    private fun requestCameraPermission() {
+        when (PackageManager.PERMISSION_GRANTED) {
+            ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA) -> {
+                initCamera()
+            }
+            else -> {
+                cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
+            }
+        }
+    }
+
+    @SuppressLint("QueryPermissionsNeeded")
     private fun initCamera() {
-        when {
-            ContextCompat.checkSelfPermission(
-                context,
-                CAMERA
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                runCamera()
-            }
-            shouldShowRequestPermissionRationale(CAMERA) -> {
-                showPermissionContextPopup(CAMERA)
-            }
-            else -> {
-                requestPermissions(arrayOf(CAMERA), 1000)
-            }
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (takePictureIntent.resolveActivity(requireContext().packageManager) != null) {
+            takePictureLauncher.launch(takePictureIntent)
         }
     }
 
-    private fun initAddPhoto(){
-        when {
-            ContextCompat.checkSelfPermission(
-                context,
-                READ_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                navigatePhoto()
-            }
-            shouldShowRequestPermissionRationale(READ_EXTERNAL_STORAGE) -> {
-                showPermissionContextPopup(READ_EXTERNAL_STORAGE)
-            }
-            else -> {
-                requestPermissions(arrayOf(READ_EXTERNAL_STORAGE), 1000)
-            }
+    private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val imageBitmap = result.data?.extras?.get("data") as Bitmap
+            val part = bitmapToMultipart(imageBitmap, "test.jpg")
+            postImage(part)
+
         }
     }
 
-    private fun rotateBitmap(bitmap: Bitmap): Bitmap {
-        val matrix = Matrix()
-        matrix.postRotate(90f)
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if(resultCode != Activity.RESULT_OK){
-            return
-        }
-        val selectedImageUri: Uri? = data?.data
-
-        when(requestCode) {
-            2000 -> {
-                if(selectedImageUri != null){
-                    binding?.dogImage?.setImageURI(selectedImageUri)
-                }else{
-                    Toast.makeText(context, "사진을 가져오지 못했습니다", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            3000 -> {
-                val extras = data?.extras
-                val bitmap = extras?.get("data") as Bitmap?
-                val rotatedBitmap = rotateBitmap(bitmap!!)
-                val file: File = convertBitmapToFile(rotatedBitmap)
-
-                val survey = RequestBody.create("image/*".toMediaTypeOrNull(), file)
-                val multipart = MultipartBody.Part.createFormData("image", "download.jpg", survey)
-                postImage(multipart)
-            }
-
-            else -> {
-                Toast.makeText(context, "사진을 가져오지 못했습니다", Toast.LENGTH_SHORT).show()
-            }
+    private val cameraPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            initCamera()
+        } else {
+            // 권한을 거부한 경우
         }
     }
 
-    private fun showPermissionContextPopup(permission: String) {
-        AlertDialog.Builder(context)
-            .setTitle("권한이 필요합니다.")
-            .setMessage("사진을 등록하기 위해서 권한이 필요합니다.")
-            .setPositiveButton("동의하기") { _, _ ->
-                requestPermissions(arrayOf(permission), 1000)
-            }
-            .setNegativeButton("취소하기") { _, _ -> }
-            .create()
-            .show()
-    }
 
-    private fun navigatePhoto(){
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        startActivityForResult(intent, 2000)
-    }
-
-    private fun runCamera(){
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        startActivityForResult(intent, 3000)
-    }
-
-    private fun convertBitmapToFile(bitmap: Bitmap): File{
-        val file = File(context.filesDir, "picture")
-        val output = FileOutputStream(file)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output)
-        return file
-    }
 
     private fun postImage(body: MultipartBody.Part){
         RetrofitBuilder.api.postEyeImage(image = body).enqueue(object: Callback<JsonObject> {
