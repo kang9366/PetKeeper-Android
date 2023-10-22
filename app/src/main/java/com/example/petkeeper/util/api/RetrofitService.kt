@@ -1,9 +1,11 @@
 package com.example.petkeeper.util.api
 
+import com.example.petkeeper.model.HospitalResponse
 import com.example.petkeeper.model.LoginResponse
 import com.example.petkeeper.model.User
 import com.example.petkeeper.model.UserResponse
 import com.example.petkeeper.util.App
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import okhttp3.MultipartBody
 import retrofit2.Call
@@ -23,6 +25,12 @@ interface RetrofitService{
         @Field("USER_EMAIL") email: String,
         @Field("USER_PASSWORD")  password: String
     ): Call<LoginResponse>
+
+    @GET("/hospital")
+    fun getHospital(
+        @Query("X") x: String,
+        @Query("Y") y: String
+    ): Call<HospitalResponse>
 
 
     //로그아웃 Todo-API 날리고 SharedPreference 날리기
@@ -131,6 +139,7 @@ interface RetrofitService{
         @Field("PET_VACCINATION_DATE") PET_VACCINATION_DATE: String,
         @Field("PET_VACCINATION_PERIOD") PET_VACCINATION_PERIOD: String
     ):Call<JsonObject>
+
     @FormUrlEncoded
     @POST("/pet/weight/{pet_id}")
     fun postWeight(
@@ -174,7 +183,7 @@ interface RetrofitService{
     //전체 게시글 확인하기
     @GET("/post/list")
     fun getAllPost(
-    ):Call <JsonObject>
+    ):Call <JsonArray>
 
     //게시글하나 보기
     @GET("/post/{post_id}")
@@ -211,6 +220,7 @@ interface RetrofitService{
         @Header("Authorization") token: String = "Bearer ${App.preferences.token}",
         @Path("post_id") id: String,
     ):Call<JsonObject>
+
     //좋아요 취소
     @DELETE("/post/like/{post_id}")
     fun deleteLike(

@@ -17,8 +17,13 @@ import com.example.petkeeper.util.adapter.Data
 import com.example.petkeeper.R
 import com.example.petkeeper.util.adapter.RecyclerViewAdapter
 import com.example.petkeeper.databinding.FragmentCommunityBinding
+import com.example.petkeeper.util.api.RetrofitBuilder
 import com.example.petkeeper.util.binding.BindingFragment
 import com.example.petkeeper.view.dialog.PostDialog
+import com.google.gson.JsonArray
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class CommunityFragment : BindingFragment<FragmentCommunityBinding>(R.layout.fragment_community, true) {
     private lateinit var pickMedia: ActivityResultLauncher<PickVisualMediaRequest>
@@ -58,6 +63,8 @@ class CommunityFragment : BindingFragment<FragmentCommunityBinding>(R.layout.fra
                 dialog.initDialog(pickMedia, cameraCallback)
             }
         }
+
+        getAllPosts()
     }
 
     private fun initCamera() {
@@ -94,5 +101,15 @@ class CommunityFragment : BindingFragment<FragmentCommunityBinding>(R.layout.fra
             .show()
     }
 
+    private fun getAllPosts() {
+        RetrofitBuilder.api.getAllPost().enqueue(object: Callback<JsonArray>{
+            override fun onResponse(call: Call<JsonArray>, response: Response<JsonArray>) {
+                Log.d("community test", response.body()!!.toString())
+            }
 
+            override fun onFailure(call: Call<JsonArray>, t: Throwable) {
+                Log.d("community test error", t.message.toString())
+            }
+        })
+    }
 }
