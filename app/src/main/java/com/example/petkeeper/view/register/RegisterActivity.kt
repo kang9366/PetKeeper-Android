@@ -155,21 +155,13 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
         val intent = Intent(this@RegisterActivity, MainActivity::class.java)
 
         if(checkData()){
-            App.preferences.Pet().name = binding.editName.text.toString()
-            App.preferences.Pet().weight =  binding.editWeight.text.toString().toInt()
-            App.preferences.Pet().age = age
-            if(binding.maleButton.isSelected){ App.preferences.Pet().gender = "male" }
-            else{ App.preferences.Pet().gender = "female" }
-            lateinit var gender: String
+            var gender: String? = null
             if(binding.maleButton.isSelected){
                 gender = "male"
             }else if(binding.femaleButton.isSelected){
                 gender = "female"
             }
-
-            if(binding.maleButton.isSelected){ App.preferences.Pet().gender = "male" }
-            else{ App.preferences.Pet().gender = "female" }
-            postPetData(gender)
+            postPetData(gender!!)
             startActivity(intent)
             finish()
         }else{
@@ -185,7 +177,8 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
             binding.birthButton.text.toString()).enqueue(object: Callback<JsonObject>{
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                 if(response.isSuccessful){
-                    App.preferences.Pet().id = JSONObject(response.body().toString()).getInt("USER_ID").toString()
+                    Log.d("testtt", response.toString())
+//                    App.preferences.Pet().id = JSONObject(response.body().toString()).getInt("USER_ID").toString()
                 }
             }
 
@@ -209,7 +202,6 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
             show()
         }
     }
-
 
     // 생년월일 선택 dialog
     fun test(view: View){
@@ -263,6 +255,7 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
     }
 
     override fun postData(data: String) {
-        Log.d("Testt", data)
+        binding.birthButton.text = data
+        binding.birthButton.isSelected = true
     }
 }
