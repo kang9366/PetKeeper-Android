@@ -1,5 +1,6 @@
 package com.example.petkeeper.util.api
 
+import com.example.petkeeper.model.CommunityResponse
 import com.example.petkeeper.model.HospitalResponse
 import com.example.petkeeper.model.LoginResponse
 import com.example.petkeeper.model.User
@@ -36,7 +37,7 @@ interface RetrofitService{
     //로그아웃 Todo-API 날리고 SharedPreference 날리기
     @GET("/user/logout")
     fun userLogOut(
-        @Header("Authorization") token: String? = App.preferences.token,
+        @Header("Authorization") token: String? = "Bearer ${App.preferences.token}"
     ): Call <JsonObject>
 
     //회원 정보 수정 Todo-SharedPreference 날리고 token, USER 다시 받기
@@ -46,7 +47,7 @@ interface RetrofitService{
     fun updateUser(
         @Header("Authorization") token: String? = App.preferences.token,
         //Todo-USER_ID 값 같이 보내기
-//        @Path("user_id") id: String? = App.preferences
+        @Path("user_id") id: String? = App.preferences.userId.toString(),
         @Field("USER_PASSWORD") USER_PASSWORD: String,
         @Field("USER_PHONE") USER_PHONE: String,
         @Field("USER_IMAGE") USER_IMAGE: String,
@@ -90,7 +91,7 @@ interface RetrofitService{
     @Multipart
     @POST("/diag/eye")
     fun postEyeImage(
-        @Header("Authorization") token: String? = App.preferences.token,
+        @Header("Authorization") token: String? = "Bearer ${App.preferences.token}",
         @Part image: MultipartBody.Part
     ): Call<JsonObject>
 
@@ -155,7 +156,6 @@ interface RetrofitService{
     @POST("/post")
     fun addPost(
         @Header("Authorization") token: String = "Bearer ${App.preferences.token}",
-        @Field("POST_TITLE") POST_TITLE: String,
         @Field("POST_CONTENT") POST_CONTENT: String,
         @Part image: MultipartBody.Part
     ):Call <JsonObject>
@@ -183,7 +183,7 @@ interface RetrofitService{
     //전체 게시글 확인하기
     @GET("/post/list")
     fun getAllPost(
-    ):Call <JsonArray>
+    ):Call <CommunityResponse>
 
     //게시글하나 보기
     @GET("/post/{post_id}")
