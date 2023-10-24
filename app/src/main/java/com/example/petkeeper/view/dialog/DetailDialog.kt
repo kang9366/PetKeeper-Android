@@ -28,7 +28,7 @@ class DetailDialog(context : AppCompatActivity, private val viewModel: TestViewM
         binding.titleText.text = "${year}년 ${month-1}월 ${day.date}일"
 
         viewPagerAdapter.apply {
-            addFragment(DetailInfoDialog())
+//            addFragment(DetailInfoDialog())
             addFragment(DetailExaminationDialog())
         }
 

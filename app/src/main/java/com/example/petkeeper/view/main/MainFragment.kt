@@ -12,6 +12,7 @@ import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
@@ -38,6 +39,7 @@ import com.google.gson.JsonObject
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -45,7 +47,12 @@ import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main, true) {
     private val viewModel: TestViewModel by activityViewModels()
@@ -106,10 +113,37 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
             }
 
             override fun onFailure(call: Call<UserResponse>, t: Throwable) {
-                TODO("Not yet implemented")
+
             }
 
         })
+    }
+
+    fun saveUriToFile(context: Context, uri: Uri): File? {
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val fileName = "IMG_$timeStamp.jpg"
+
+        val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+
+        try {
+            val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
+            if (inputStream != null) {
+                val file = File(storageDir, fileName)
+                val fos = FileOutputStream(file)
+                val buffer = ByteArray(1024)
+                var read: Int
+                while (inputStream.read(buffer).also { read = it } != -1) {
+                    fos.write(buffer, 0, read)
+                }
+                fos.close()
+                inputStream.close()
+                return file
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        return null
     }
 
     @SuppressLint("SetTextI18n")
@@ -151,22 +185,13 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
         isFabOpen = !isFabOpen
     }
 
-    private fun bitmapToMultipart(bitmap: Bitmap, fileName: String): MultipartBody.Part {
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream)
-        val byteArray = byteArrayOutputStream.toByteArray()
-
-        val requestBody = byteArray.toRequestBody("image/jpeg".toMediaTypeOrNull(), 0, byteArray.size)
-        return MultipartBody.Part.createFormData("image", fileName, requestBody)
-    }
-
     private fun requestCameraPermission() {
         when (PackageManager.PERMISSION_GRANTED) {
-            ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA) -> {
+            ContextCompat.checkSelfPermission(requireContext(), CAMERA) -> {
                 initCamera()
             }
             else -> {
-                cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
+                cameraPermissionLauncher.launch(CAMERA)
             }
         }
     }
@@ -179,12 +204,31 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
         }
     }
 
+    fun saveBitmapToFile(context: Context, bitmap: Bitmap): File? {
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val fileName = "IMG_$timeStamp.jpg"
+
+        val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+
+        return try {
+            val file = File(storageDir, fileName)
+            val fos = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+            fos.close()
+            file
+        } catch (e: IOException) {
+            e.printStackTrace()
+            null
+        }
+    }
+
     private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            val imageBitmap = result.data?.extras?.get("data") as Bitmap
-            val part = bitmapToMultipart(imageBitmap, "test.jpg")
-            postImage(part)
-
+            val bitmap = result.data?.extras?.get("data") as Bitmap
+            val file = saveBitmapToFile(context, bitmap)
+            val fileRequestBody = file!!.asRequestBody("application/octet-stream".toMediaTypeOrNull())
+            val filePart = MultipartBody.Part.createFormData("image", file.name, fileRequestBody)
+            postImage(filePart)
         }
     }
 
@@ -198,16 +242,25 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
         }
     }
 
+    private fun bitmapToMultipart(bitmap: Bitmap, fileName: String): MultipartBody.Part {
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 10, byteArrayOutputStream)
+        val byteArray = byteArrayOutputStream.toByteArray()
+
+        val requestBody = byteArray.toRequestBody("image/jpeg".toMediaTypeOrNull(), 0, byteArray.size)
+        return MultipartBody.Part.createFormData("image ", fileName, requestBody)
+    }
+
 
 
     private fun postImage(body: MultipartBody.Part){
         RetrofitBuilder.api.postEyeImage(image = body).enqueue(object: Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                Log.d("post eye image", response.toString())
+                Log.d("post eye image", response.body().toString())
             }
 
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                Log.d("post eye image", t.message.toString())
+                Log.d("post eye image error", t.message.toString())
             }
         })
     }

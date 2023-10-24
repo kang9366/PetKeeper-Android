@@ -12,10 +12,6 @@ import java.util.Calendar
 
 data class DateItem(val date: Int, val day: String)
 
-interface OnItemClickListener{
-    fun onItemClick(v: View, data: DateItem, pos : Int)
-}
-
 class DateAdapter(private val items: ArrayList<DateItem>): RecyclerView.Adapter<DateAdapter.ViewHolder>() {
     private var listener : OnItemClickListener? = null
 

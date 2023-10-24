@@ -15,12 +15,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.petkeeper.util.adapter.Data
 import com.example.petkeeper.R
-import com.example.petkeeper.util.adapter.RecyclerViewAdapter
+import com.example.petkeeper.util.adapter.CommunityAdapter
 import com.example.petkeeper.databinding.FragmentCommunityBinding
+import com.example.petkeeper.model.CommunityResponse
+import com.example.petkeeper.model.Post
+import com.example.petkeeper.model.PostList
+import com.example.petkeeper.util.App
 import com.example.petkeeper.util.api.RetrofitBuilder
 import com.example.petkeeper.util.binding.BindingFragment
 import com.example.petkeeper.view.dialog.PostDialog
-import com.google.gson.JsonArray
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -42,15 +45,8 @@ class CommunityFragment : BindingFragment<FragmentCommunityBinding>(R.layout.fra
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val recyclerView = binding?.recyclerView
-        val item = ArrayList<Data>()
-
-        for(i in 0..8){
-            item.add(Data("test"))
-        }
-
-        val adapter = RecyclerViewAdapter(item)
-        recyclerView?.adapter = adapter
+        //위 주석처리된거 다 getAllPosts로 넘김
+        getAllPosts()
 
         val cameraCallback: () -> Unit = {
             initCamera()
@@ -63,8 +59,6 @@ class CommunityFragment : BindingFragment<FragmentCommunityBinding>(R.layout.fra
                 dialog.initDialog(pickMedia, cameraCallback)
             }
         }
-
-        getAllPosts()
     }
 
     private fun initCamera() {
@@ -101,15 +95,68 @@ class CommunityFragment : BindingFragment<FragmentCommunityBinding>(R.layout.fra
             .show()
     }
 
+
+
     private fun getAllPosts() {
-        RetrofitBuilder.api.getAllPost().enqueue(object: Callback<JsonArray>{
-            override fun onResponse(call: Call<JsonArray>, response: Response<JsonArray>) {
-                Log.d("community test", response.body()!!.toString())
+
+        RetrofitBuilder.api.getAllPost().enqueue(object: Callback<CommunityResponse>{
+            override fun onResponse(call: Call<CommunityResponse>, response: Response<CommunityResponse>) {
+                var data = response.body()?.data!!
+                data.forEach { post ->
+                    post.CommentsCount = post.p_post_comments.size
+                    post.LikesCount = post.p_post_likes.size
+                    post.IsLikedByCurrentUser = isCurrentUserLikedPost(post)
+                }
+                val postDetailsList = data.map { post ->
+                    PostList(
+                        POST_ID = post.POST_ID,
+                        POSTED_USER_ID = post.USER_ID,
+                        POSTED_USER_IMAGE = post.USER.USER_IMAGE ?: "",
+                        POSTED_USER_EMAIL = post.USER.USER_EMAIL ?: "",
+                        POST_IMAGE = post.POST_IMAGE ?: "",
+                        POST_CONTENT = post.POST_CONTENT?:"",
+                        LIKESCOUNT = post.LikesCount,
+                        CommentsCount = post.CommentsCount,
+                        POST_DATE = post.POST_DATE ?: "",
+                        POST_TIME = post.POST_TIME ?: "",
+                        IsLikedByCurrentUser = post.IsLikedByCurrentUser
+                    )
+                }
+                Log.d("community test", postDetailsList.toString())
+                Log.d("community test", postDetailsList[0].toString())
+                Log.d("community test", postDetailsList[1].toString())
+
+                val recyclerView = binding?.recyclerView
+                val item = ArrayList<Data>()
+
+                for(i in postDetailsList){
+                    item.add(Data(
+                        i.POST_ID,
+                        i.POSTED_USER_IMAGE,
+                        i.POSTED_USER_EMAIL,
+                        i.POST_CONTENT,
+                        i.POST_IMAGE,
+                        i.LIKESCOUNT,
+                        i.CommentsCount,
+                        i.IsLikedByCurrentUser
+                    ))
+                }
+
+                val adapter = CommunityAdapter(item)
+                recyclerView?.adapter = adapter
+
             }
 
-            override fun onFailure(call: Call<JsonArray>, t: Throwable) {
+            override fun onFailure(call: Call<CommunityResponse>, t: Throwable) {
                 Log.d("community test error", t.message.toString())
             }
         })
     }
+
+    // 포스트에 대해 현재 사용자가 좋아요를 했는지 확인하는 함수
+    private fun isCurrentUserLikedPost(post: Post): Boolean {
+        val currentUserId = App.preferences.userId
+        return post.p_post_likes.any { it.USER_ID == currentUserId }
+    }
+
 }
